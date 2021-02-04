@@ -259,12 +259,19 @@ open class Handler(val vertx: Vertx, val app: App) : CoroutineScope {
     }
 
     open suspend fun txmit(target: CardConnectorIdx, cmd: CommandAPDU, resp: JsonObject): JsonObject{
-        val apduResp = onWorkerCtx { send(target, cmd) }
-        resp["response"] = Util.bytesToHex(apduResp.bytes)
-        resp["sw"] = apduResp.sw
-        resp["sw_hex"] = Integer.toHexString(apduResp.sw.and(0xffff))
-        resp["sw1"] = apduResp.sW1
-        resp["sw2"] = apduResp.sW2
+        try {
+            val apduResp = onWorkerCtx { send(target, cmd) }
+            resp["response"] = Util.bytesToHex(apduResp.bytes)
+            resp["sw"] = apduResp.sw
+            resp["sw_hex"] = Integer.toHexString(apduResp.sw.and(0xffff))
+            resp["sw1"] = apduResp.sW1
+            resp["sw2"] = apduResp.sW2
+        } catch(e: Exception){
+            logger.error("Exception during executing card command", e)
+            resp["response"] = -2
+            resp["error"] = "Exception during execution: ${e.localizedMessage}"
+        }
+
         return resp
     }
 

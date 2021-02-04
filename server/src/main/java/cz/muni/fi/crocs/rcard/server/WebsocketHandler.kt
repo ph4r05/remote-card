@@ -153,7 +153,7 @@ open class WebsocketHandler(private val parent: WebsocketServer, private val web
         } catch(e: Exception){
             logger.warn("General Exception: ${e.localizedMessage}", e)
             val resp = buildResp(json)
-            resp["rcode"] = -1
+            resp["result"] = -1
             resp["error"] = "General exception: ${e.message}"
             sendTxt(resp)
         }

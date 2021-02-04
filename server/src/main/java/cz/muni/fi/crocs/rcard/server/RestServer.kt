@@ -173,7 +173,7 @@ open class RestServer(vertx_: Vertx, app: App): BaseVerticle(vertx_, app) {
 
         } catch (e: Exception){
             logger.info("Error: ping failed $e", e)
-            resp.put("success", 0)
+            resp.put("result", -1)
             resp.put("error", "Exception: ${e.localizedMessage}")
         } finally {
             handler.onClientDisconnect()
