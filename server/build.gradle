@@ -1,0 +1,116 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
+}
+
+group = 'com.klinec'
+version = '1.0-SNAPSHOT'
+
+configurations {
+    bcprov
+    runtimeClasspath.extendsFrom(bcprov)
+}
+
+dependencies {
+    api(project(':common'))
+
+    implementation('com.klinec:jcardsim:3.0.5.11')
+    implementation(group: 'com.klinec', name: 'javacard-tools', version: '0.0.3') {
+        exclude group: "com.klinec", module: "jcardsim"
+    }
+
+    implementation "com.github.martinpaljak:apdu4j-core:$apdu4j_version"
+    implementation "com.github.martinpaljak:apdu4j-pcsc:$apdu4j_pcsc_version"
+
+    implementation "io.vertx:vertx-core:$vertx_version"
+    implementation "io.vertx:vertx-lang-kotlin:$vertx_version"
+    implementation "io.vertx:vertx-lang-kotlin-coroutines:$vertx_version"
+    implementation "io.vertx:vertx-auth-jwt:$vertx_version"
+    implementation "io.vertx:vertx-web:$vertx_version"
+    implementation "io.vertx:vertx-web-client:$vertx_version"
+
+    bcprov("org.bouncycastle:bcprov-jdk15on:$bouncycastle_version")
+    bcprov("org.bouncycastle:bcpkix-jdk15on:$bouncycastle_version")
+
+    implementation "io.ktor:ktor-server-netty:$ktor_version"
+    implementation "io.ktor:ktor-html-builder:$ktor_version"
+    implementation 'org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2'
+
+    implementation group: "io.undertow", name: "undertow-core", version: "2.0.26.Final"
+    implementation group: "ch.qos.logback", name: "logback-classic", version: "1.2.3"
+    implementation group: "ch.qos.logback", name: "logback-core", version: "1.2.3"
+    implementation "com.github.ajalt:clikt:2.6.0"
+    implementation "com.jayway.jsonpath:json-path:2.4.0"
+
+    implementation 'com.github.martinpaljak:gppro:20.08.12'
+    implementation 'com.github.martinpaljak:gptool:20.08.12'
+    implementation 'com.github.martinpaljak:globalplatformpro:20.08.12'
+    implementation 'com.github.martinpaljak:apdu4j-core:2020b1'
+    implementation 'com.github.martinpaljak:apdu4j-pcsc:20.08.12'
+
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    runtime 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
+
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
+}
+
+test {
+    useJUnit()
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = '1.8'
+    if (JavaVersion.current() >= JavaVersion.VERSION_1_9) {
+        kotlinOptions.freeCompilerArgs += ["-Xadd-modules=java.smartcardio"]
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = '1.8'
+}
+
+application {
+    mainClassName = 'cz.muni.fi.crocs.rcard.server.AppKt'
+}
+
+run {
+    systemProperties System.getProperties()
+    properties.put("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.SLF4JLogDelegateFactory")
+    args System.getProperty("exec.args", "").split()
+}
+
+task copyShadowLibs(type: Copy) {
+    from configurations.shadow, configurations.bcprov
+    into 'build/libs'
+}
+
+task shadowJarNoBc(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+    group 'shadow'
+    archiveClassifier.set('all')
+    dependsOn copyShadowLibs
+
+    dependencies {
+        exclude(dependency('org.bouncycastle:bcprov-.*:.*'))
+    }
+
+    relocate('org.bouncycastle', 'shadow.org.bouncycastle'){
+        exclude 'org.bouncycastle.jcajce.**'
+        exclude 'org.bouncycastle.jce.**'
+
+        exclude 'org.bouncycastle.asn1.**'
+        exclude 'org.bouncycastle.crypto.**'
+        exclude 'org.bouncycastle.i18n.**'
+        exclude 'org.bouncycastle.math.**'
+        exclude 'org.bouncycastle.pqc.**'
+        exclude 'org.bouncycastle.util.**'
+        exclude 'org.bouncycastle.x509.**'
+    }
+
+    from(project.convention.getPlugin(JavaPluginConvention).sourceSets.main.output)
+    configurations = [ project.configurations.runtime, project.configurations.runtimeClasspath ]
+
+    exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+    manifest.attributes 'Main-Class': mainClassName
+    manifest.attributes 'Class-Path': "bcprov-jdk15on-${bouncycastle_version}.jar"
+}

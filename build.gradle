@@ -1,0 +1,52 @@
+group = 'com.klinec'
+version = '1.0-SNAPSHOT'
+
+buildscript {
+    ext.kotlin_version = '1.4.21'
+    ext.kotlin_coro_version = '1.4.2'
+    ext.ktor_version = '1.5.0'
+    ext.bouncycastle_version = '1.66'
+    ext.vertx_version = '3.9.0'
+    ext.apdu4j_version = '2020b1'
+    ext.apdu4j_pcsc_version = '20.08.12'
+
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        jvmTarget = '1.8'
+//        freeCompilerArgs += '-include-runtime'
+//        freeCompilerArgs += ["--add-modules", "java.smartcardio"]
+//        freeCompilerArgs += ["--add-modules", "javax.smartcardio"]
+//        freeCompilerArgs += ["--add-modules", "java.se.ee"]
+    }
+}
+
+tasks.withType(JavaCompile) {
+    sourceCompatibility = '1.8'
+//    options.compilerArgs += ["--add-modules", "java.smartcardio"]
+//    options.compilerArgs += ["--add-modules", "javax.smartcardio"]
+//    options.compilerArgs += ["--add-modules", "java.se.ee"]
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+        maven { url "https://javacard.pro/maven" }
+        maven { url "https://deadcode.me/mvn" }
+    }
+    ext {
+        jcardsim = 'com.klinec:jcardsim:3.0.5.11'
+    }
+}
