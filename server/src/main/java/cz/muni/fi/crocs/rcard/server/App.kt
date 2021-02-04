@@ -40,10 +40,10 @@ open class App : CliktCommand(), CoroutineScope {
     val verbose: Boolean by option("--verbose",
         help="Verbose log level")
         .flag(default=false)
-    val port: Int by option(
+    val port: Int by option("--port",
         help="WebSocket port to listen on")
         .int().default(9900)
-    val webPort: Int by option(
+    val webPort: Int by option("--web-port",
         help="REST port to listen on")
         .int().default(9901)
     val workerThreads: Int by option("--workers",

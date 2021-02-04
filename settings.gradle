@@ -1,8 +1,5 @@
-
-rootProject.name = 'untitled2'
-
+rootProject.name = 'remote-card'
 
 include(':common')
 include(':server')
 include(':client')
-
