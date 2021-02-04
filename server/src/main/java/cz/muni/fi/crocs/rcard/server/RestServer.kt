@@ -50,7 +50,7 @@ open class RestServer(vertx_: Vertx, app: App): BaseVerticle(vertx_, app) {
         return app.getHandler()
     }
 
-    fun initHooks(){
+    fun initHooks() {
         val handler = getHandler()
         router = Router.router(vertx)
         router.route("/static/*").handler(StaticHandler.create())
@@ -64,6 +64,66 @@ open class RestServer(vertx_: Vertx, app: App): BaseVerticle(vertx_, app) {
                 logger.info("Card action from ${ctx.request().remoteAddress()}")
                 handler.onGlobalCtxAsync {
                     handleCard(ctx)
+                }
+            }
+
+        router
+            .route("/v1/card/:ctype/:cidx/is_connected")
+            .produces("application/json")
+            .handler(BodyHandler.create())
+            .handler { ctx ->
+                handler.onGlobalCtxAsync {
+                    handleIsConnected(ctx)
+                }
+            }
+
+        router
+            .route("/v1/card/:ctype/:cidx/connect")
+            .produces("application/json")
+            .handler(BodyHandler.create())
+            .handler { ctx ->
+                handler.onGlobalCtxAsync {
+                    handleConnect(ctx)
+                }
+            }
+
+        router
+            .route("/v1/card/:ctype/:cidx/disconnect")
+            .produces("application/json")
+            .handler(BodyHandler.create())
+            .handler { ctx ->
+                handler.onGlobalCtxAsync {
+                    handleDisconnect(ctx)
+                }
+            }
+
+        router
+            .route("/v1/card/:ctype/:cidx/atr")
+            .produces("application/json")
+            .handler(BodyHandler.create())
+            .handler { ctx ->
+                handler.onGlobalCtxAsync {
+                    handleAtr(ctx)
+                }
+            }
+
+        router
+            .route("/v1/card/:ctype/:cidx/select/:aid")
+            .produces("application/json")
+            .handler(BodyHandler.create())
+            .handler { ctx ->
+                handler.onGlobalCtxAsync {
+                    handleSelect(ctx)
+                }
+            }
+
+        router
+            .route("/v1/card/:ctype/:cidx/cmd/:cmd")
+            .produces("application/json")
+            .handler(BodyHandler.create())
+            .handler { ctx ->
+                handler.onGlobalCtxAsync {
+                    handleCmd(ctx)
                 }
             }
 
@@ -83,15 +143,28 @@ open class RestServer(vertx_: Vertx, app: App): BaseVerticle(vertx_, app) {
 
     open suspend fun handleCard(ctx: RoutingContext) {
         val ctxResp = ctx.response()
+        try {
+            val reqBody = ctx.bodyAsJson
+            val reqParam = ctx.queryParam("req")
+            val req = if (reqBody?.isEmpty == false) reqBody else JsonObject(if (reqParam.isEmpty()) "{}" else reqParam.first())
+            handleCore(req, ctxResp)
+            return
+
+        } catch (e: Exception){
+            logger.info("Error: cmd failed $e", e)
+            val resp = JsonObject()
+            resp.put("success", 0)
+            resp.put("error", "Exception: ${e.localizedMessage}")
+            write(ctxResp, resp)
+        }
+    }
+
+    open suspend fun handleCore(req: JsonObject, ctxResp: HttpServerResponse): JsonObject {
         var resp = JsonObject()
         val handler = getHandler()
 
         try {
             handler.onClientConnect()
-
-            val reqBody = ctx.bodyAsJson
-            val reqParam = ctx.queryParam("req")
-            val req = if (reqBody?.isEmpty == false) reqBody else JsonObject(if (reqParam.isEmpty()) "{}" else reqParam.first())
             logger.info("Req: $req")
 
             val reqKlax = klaxon.parseJsonObject(StringReader(req.toString()))
@@ -105,8 +178,8 @@ open class RestServer(vertx_: Vertx, app: App): BaseVerticle(vertx_, app) {
         } finally {
             handler.onClientDisconnect()
         }
-
         write(ctxResp, resp)
+        return resp
     }
 
     open fun handlePing(ctx: RoutingContext) {
@@ -123,6 +196,53 @@ open class RestServer(vertx_: Vertx, app: App): BaseVerticle(vertx_, app) {
         }
 
         write(ctxResp, resp)
+    }
+
+    private fun extractTarget(ctx: RoutingContext, req: JsonObject? = null): JsonObject {
+        val r = req ?: JsonObject()
+        val ctypeStr = ctx.request().getParam("ctype") ?: throw RuntimeException("ctype not specified")
+        val cIdxStr = ctx.request().getParam("cidx") ?: throw RuntimeException("cidx not specified")
+        r.put("target", ctypeStr)
+        r.put("idx", cIdxStr.toInt())
+        return r
+    }
+
+    private suspend fun handleIsConnected(ctx: RoutingContext) {
+        val r = extractTarget(ctx)
+        r.put("action", "is_connected")
+        handleCore(r, ctx.response())
+    }
+
+    private suspend fun handleConnect(ctx: RoutingContext) {
+        val r = extractTarget(ctx)
+        r.put("action", "connect")
+        handleCore(r, ctx.response())
+    }
+
+    private suspend fun handleDisconnect(ctx: RoutingContext) {
+        val r = extractTarget(ctx)
+        r.put("action", "disconnect")
+        handleCore(r, ctx.response())
+    }
+
+    private suspend fun handleAtr(ctx: RoutingContext) {
+        val r = extractTarget(ctx)
+        r.put("action", "atr")
+        handleCore(r, ctx.response())
+    }
+
+    private suspend fun handleSelect(ctx: RoutingContext) {
+        val r = extractTarget(ctx)
+        r.put("action", "select")
+        r.put("aid", ctx.request().getParam("aid"))
+        handleCore(r, ctx.response())
+    }
+
+    private suspend fun handleCmd(ctx: RoutingContext) {
+        val r = extractTarget(ctx)
+        r.put("action", "send")
+        r.put("apdu", ctx.request().getParam("cmd"))
+        handleCore(r, ctx.response())
     }
 
     private fun write(response: HttpServerResponse, jsResp: JsonObject){

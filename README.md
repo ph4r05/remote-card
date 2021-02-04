@@ -2,7 +2,10 @@
 
 Wraps JCardSim and physical cards behind REST and WebSocket interface.
 
-## Usage
+# Server
+Server part below.
+
+## Server Usage
 
 ```bash
 ./gradlew run --args='--help'
@@ -24,6 +27,20 @@ API can be called in two ways:
 Response is JSON encoded, contains `result` integer field. If there was no error, it contains `0`. 
 Other values indicate some problem with processing. Field `error` can contain additional information about the error
 (e.g., exception message).
+
+Convenience API endpoints are available according to the scheme:
+```
+/v1/card/:card_type/reader_index/action
+```
+
+Example:
+- `/v1/card/card/0/is_connected`
+- `/v1/card/card/0/connect`
+- `/v1/card/card/0/disconnect`
+- `/v1/card/card/0/atr`
+- `/v1/card/card/0/select/001020303040506`
+- `/v1/card/card/0/cmd/0001000000`
+- `/v1/card/sim/0/is_connected`
 
 ### API logic - physical cards
 
