@@ -31,7 +31,7 @@ open class App : CliktCommand(), CoroutineScope {
     override val coroutineContext: CoroutineContext by lazy { createSingleThreadDispatcher() }
 
     val bc = BouncyCastleProvider()
-    protected lateinit var cardHandler: Handler
+    protected lateinit var cardHandler: CardHandler
 
     // https://ajalt.github.io/clikt
     val debug: Boolean by option("--debug",
@@ -40,10 +40,7 @@ open class App : CliktCommand(), CoroutineScope {
     val verbose: Boolean by option("--verbose",
         help="Verbose log level")
         .flag(default=false)
-    val port: Int by option("--port",
-        help="WebSocket port to listen on")
-        .int().default(9900)
-    val webPort: Int by option("--web-port",
+    val webPort: Int by option("--port",
         help="REST port to listen on")
         .int().default(9901)
     val workerThreads: Int by option("--workers",
@@ -62,7 +59,6 @@ open class App : CliktCommand(), CoroutineScope {
     lateinit var vertx: Vertx
     private val appCtx = createSingleThreadDispatcher("AppCtx")
     private val shuttingDown = AtomicBoolean(false)
-    private var verticleWs: String? = null
     private var verticleRest: String? = null
 
     private fun loadConfig() {
@@ -77,7 +73,7 @@ open class App : CliktCommand(), CoroutineScope {
         prepareSim()
         loadConfig()
 
-        cardHandler = Handler(vertx, this)
+        cardHandler = CardHandler(vertx, this)
         cardHandler.preinitManagers()
 
         deployVerticles()
@@ -107,14 +103,6 @@ open class App : CliktCommand(), CoroutineScope {
 
     open fun deployVerticles(){
         logger.info("Deploying vertices")
-        vertx.deployVerticle(newWsServer()) {
-            verticleWs = it.result()
-            logger.info("WebSocket deployed: $verticleWs")
-            if (verticleWs.isNullOrBlank()){
-                logger.error("WebSocket deployment failed, terminating the server")
-                shutdownServer()
-            }
-        }
 
         vertx.deployVerticle(newRestServer()) {
             verticleRest = it.result()
@@ -126,15 +114,11 @@ open class App : CliktCommand(), CoroutineScope {
         }
     }
 
-    open fun newWsServer(): WebsocketServer {
-        return WebsocketServer(vertx, this)
-    }
-
     open fun newRestServer(): RestServer {
         return RestServer(vertx, this)
     }
 
-    open fun getHandler(): Handler {
+    open fun getHandler(): CardHandler {
         return cardHandler
     }
 
@@ -190,11 +174,6 @@ open class App : CliktCommand(), CoroutineScope {
 
     open suspend fun undeployVerticles(){
         logger.info("Stopping the server")
-        verticleWs?.let {
-            logger.info("Undeploying verticleWs: $verticleWs")
-            runNoExc { withTimeout(5_000) { vertx.undeployAwait(it) } }
-            verticleWs = null
-        }
         verticleRest?.let {
             logger.info("Undeploying verticleRest: $verticleRest")
             runNoExc { withTimeout(5_000) { vertx.undeployAwait(it) } }

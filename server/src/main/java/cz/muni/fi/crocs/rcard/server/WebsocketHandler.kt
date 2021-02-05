@@ -10,9 +10,8 @@ import io.vertx.kotlin.coroutines.awaitEvent
 import kotlinx.coroutines.*
 import java.io.IOException
 
-open class WebsocketHandler(private val parent: WebsocketServer, private val webSocket: ServerWebSocket) {
+open class WebsocketHandler(private val parent: RestServer, private val webSocket: ServerWebSocket) {
     private val logger = LoggerFactory.getLogger(javaClass)
-    private val app = parent.app
     private val vertx = parent.vertx
     private var timerId: Long? = null
     private var periodicId: Long? = null
@@ -53,7 +52,7 @@ open class WebsocketHandler(private val parent: WebsocketServer, private val web
         }
     }
 
-    protected open fun getHandler(): Handler {
+    protected open fun getHandler(): CardHandler {
         return parent.getHandler()
     }
 

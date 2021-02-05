@@ -203,7 +203,7 @@ public class RemoteCardChannel extends CardChannel {
     public ATR getATR() {
       try {
         connectIfNeeded();
-        final var resp = cardAtr();
+        final JSONObject resp = cardAtr();
         return new ATR(Hex.decodeHex(resp.getString("atr")));
       } catch (Exception e) {
         LOG.error("ATR failed", e);

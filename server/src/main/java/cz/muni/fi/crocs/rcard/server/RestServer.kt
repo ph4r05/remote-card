@@ -5,6 +5,7 @@ import io.vertx.core.Vertx
 import io.vertx.core.http.HttpServer
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.http.HttpServerResponse
+import io.vertx.core.http.ServerWebSocket
 import io.vertx.core.json.JsonObject
 import io.vertx.core.logging.LoggerFactory
 import io.vertx.ext.web.Router
@@ -14,6 +15,7 @@ import io.vertx.ext.web.handler.ResponseContentTypeHandler
 import io.vertx.ext.web.handler.StaticHandler
 import io.vertx.ext.web.handler.TimeoutHandler
 import java.io.StringReader
+import java.util.*
 
 open class RestServer(vertx_: Vertx, app: App): BaseVerticle(vertx_, app) {
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -31,8 +33,12 @@ open class RestServer(vertx_: Vertx, app: App): BaseVerticle(vertx_, app) {
         server = vertx.createHttpServer(options)
         val port = app.webPort
         initHooks()
+
+        server.webSocketHandler { webSocket: ServerWebSocket ->
+            onClientConnected(webSocket)
+        }
         server.listen(port) {
-            logger.info("REST Server listening @ $port")
+            logger.info("REST/WebSocket Server listening @ $port")
         }
     }
 
@@ -42,11 +48,20 @@ open class RestServer(vertx_: Vertx, app: App): BaseVerticle(vertx_, app) {
             .setTcpKeepAlive(true)
     }
 
+    open fun generateSessionId(): String {
+        return UUID.randomUUID().toString()
+    }
+
+    open fun onClientConnected(webSocket: ServerWebSocket) {
+        val client = WebsocketHandler(this, webSocket)
+        client.initHooks()
+    }
+
     override suspend fun stop() {
         super.stop()
     }
 
-    open fun getHandler(): Handler {
+    open fun getHandler(): CardHandler {
         return app.getHandler()
     }
 

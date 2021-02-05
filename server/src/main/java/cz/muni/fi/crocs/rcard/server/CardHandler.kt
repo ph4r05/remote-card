@@ -26,7 +26,7 @@ import kotlin.coroutines.CoroutineContext
 data class CardConnectorIdx(val ctype: CardType, val idx: Int, val key: String? = null)
 data class CardConnectorHolder(val connector: CardManager)
 
-open class Handler(val vertx: Vertx, val app: App) : CoroutineScope {
+open class CardHandler(val vertx: Vertx, val app: App) : CoroutineScope {
     private val logger = LoggerFactory.getLogger(javaClass)
     override val coroutineContext: CoroutineContext by lazy { vertx.dispatcher() }
     private var cscope: CoroutineScope = CoroutineScope(app.coroutineContext + SupervisorJob())
