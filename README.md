@@ -1,11 +1,15 @@
 # JavaCard remote access
 
-Wraps JCardSim and physical cards behind REST and WebSocket interface.
+Wraps physically connected JavaCards and virtual JCardSim cards behind REST and WebSocket interface.
+Enables to connect multiple JavaCards on one host and access them remotely on a different host.
 
-The project contains 3 different parts:
-- Server part connects to the cards and provides API via REST and WebSocket interface
-- Client part is a library for connecting to the various card sources (including remote server)
+The project contains 3 main parts:
+- Server part connects to the cards and provides API via REST and WebSocket interface.
+- Client part is a library for connecting to the various card sources, e.g., physical, jcardsim, remote server.
 - GP is a GlobalPlatformPro wrapper with remote card channel added, so you can manipulate with the cards, e.g., install applets remotely. 
+
+Project currently does not integrate wit PCSC natively, so the remote card is not transparently installed as a card reader.
+This may be added in future releases.
 
 # GP wrapper
 
@@ -37,6 +41,14 @@ Server part below.
 ```bash
 ./gradlew :server:run --args='--reader-idx=0 --allow-pick-reader'
 ```
+
+## Future work
+
+Not currently supported, may be added later:
+- Configuring from JSON configuration file.
+- Add authentication to the clients, via access tokens.
+- Add reader index allocation and locking policy via reservation tokens.  
+- Enable TLS on the HTTP server. Vertx has already support for it, it is just needed to configure it.
 
 ### REST API
 
