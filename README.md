@@ -11,6 +11,11 @@ The project contains 3 main parts:
 Project currently does not integrate wit PCSC natively, so the remote card is not transparently installed as a card reader.
 This may be added in future releases.
 
+This project can be also used when testing JavaCard mobile applications. Implement abstract card channel on the 
+mobile platform that has two options - real card and remote card. Using remote card in initial phases of the development
+can speed up the development process. Also, the remote card can be JcardSim based card, thus you can debug 
+(e.g., put breakpoint) your applet code during mobile app development.
+
 # GP wrapper
 
 GP wrapper takes own parameters like
