@@ -17,7 +17,7 @@ import io.vertx.ext.web.handler.TimeoutHandler
 import java.io.StringReader
 import java.util.*
 
-open class RestServer(vertx_: Vertx, app: App): BaseVerticle(vertx_, app) {
+open class RestServer(vertx_: Vertx, app: Server): BaseVerticle(vertx_, app) {
     private val logger = LoggerFactory.getLogger(javaClass)
     private val klaxon = Klaxon()
     private lateinit var server: HttpServer

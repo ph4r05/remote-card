@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.CoroutineContext
 import kotlin.system.exitProcess
 
-open class App : CliktCommand(), CoroutineScope {
+open class Server : CliktCommand(), CoroutineScope {
     private val logger = LoggerFactory.getLogger(javaClass)
     override val coroutineContext: CoroutineContext by lazy { createSingleThreadDispatcher() }
 
@@ -188,4 +188,4 @@ open class App : CliktCommand(), CoroutineScope {
     }
 }
 
-fun main(args: Array<String>) = App().main(args)
+fun main(args: Array<String>) = Server().main(args)

@@ -14,38 +14,13 @@ configurations {
 
 dependencies {
     api(project(':common'))
-    implementation(project(':client'))
+    api(project(':client'))
+    api(project(':server'))
     implementation("com.klinec:jcardsim:$jcardsim_version")
-
-    api("com.beust:klaxon:5.0.1") {
-        exclude group: "org.jetbrains.kotlin", module: "kotlin-stdlib"
-        exclude group: "org.jetbrains.kotlin", module: "kotlin-reflect"
-    }
-
-    api "io.vertx:vertx-core:$vertx_version"
-    api "io.vertx:vertx-lang-kotlin:$vertx_version"
-    api "io.vertx:vertx-lang-kotlin-coroutines:$vertx_version"
-    api "io.vertx:vertx-auth-jwt:$vertx_version"
-    api "io.vertx:vertx-web:$vertx_version"
-    api "io.vertx:vertx-web-client:$vertx_version"
 
     bcprov("org.bouncycastle:bcprov-jdk15on:$bouncycastle_version")
     bcprov("org.bouncycastle:bcpkix-jdk15on:$bouncycastle_version")
 
-    api group: "io.undertow", name: "undertow-core", version: "2.0.26.Final"
-    api group: "ch.qos.logback", name: "logback-classic", version: "1.2.3"
-    api group: "ch.qos.logback", name: "logback-core", version: "1.2.3"
-
-    api "com.github.ajalt:clikt:2.8.0"
-    api "com.jayway.jsonpath:json-path:2.4.0"
-
-    api "com.github.martinpaljak:apdu4j-core:$apdu4j_version"
-    api "com.github.martinpaljak:apdu4j-pcsc:$apdu4j_pcsc_version"
-    api "com.github.martinpaljak:gppro:$gptool_version"
-    api "com.github.martinpaljak:gptool:$gptool_version"
-    api "com.github.martinpaljak:globalplatformpro:$gptool_version"
-
-    api 'javax.xml.bind:jaxb-api:2.3.1'
     runtime 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
 
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
@@ -67,7 +42,7 @@ compileTestKotlin {
 }
 
 application {
-    mainClassName = 'cz.muni.fi.crocs.rcard.server.ServerKt'
+    mainClassName = 'cz.muni.fi.crocs.rcard.serverDemo.UserServerKt'
 }
 
 run {

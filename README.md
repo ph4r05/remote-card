@@ -126,7 +126,7 @@ Before sending APDUs to your applet, you have to select the applet
 
 Response:
 ```json
-{"result":0,"num_connections":1,"response":"000000000000000000006C5544797A91115DC3330EBD003851D239A706FF2AA29000","sw":36864,"sw_hex":"9000","sw1":144,"sw2":0}
+{"result":0, "num_connections":1, "response":"000000000000000000006C5544797A91115DC3330EBD003851D239A706FF2AA29000", "sw":36864, "sw_hex":"9000", "sw1":144, "sw2":0}
 ```
 
 #### APDU command
@@ -134,12 +134,12 @@ Response:
 And finally, you can send APDU commands:
 
 ```json
-{"action":"send","target":"sim","apdu":"0001000000"}
+{"action":"send", "target":"sim", "apdu":"0001000000"}
 ```
 
 Response:
 ```json
-{"result":0,"num_connections":1,"response":"0000000000000000000051373E8B6FDEC284DB569204CA13D2CAA23BD1D85DCA9000","sw":36864,"sw_hex":"9000","sw1":144,"sw2":0}
+{"result":0, "num_connections":1, "response":"0000000000000000000051373E8B6FDEC284DB569204CA13D2CAA23BD1D85DCA9000", "sw":36864, "sw_hex":"9000", "sw1":144, "sw2":0}
 ```
 
 ### API logic - JCardSim
