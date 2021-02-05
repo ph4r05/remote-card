@@ -16,6 +16,9 @@ mobile platform that has two options - real card and remote card. Using remote c
 can speed up the development process. Also, the remote card can be JcardSim based card, thus you can debug 
 (e.g., put breakpoint) your applet code during mobile app development.
 
+Tool was created to support remote learning in [CRoCS](https://github.com/crocs-muni/), [1](https://crocs.fi.muni.cz).
+Support for remote cards is already integrated in [JavaCard gradle template project](https://github.com/crocs-muni/javacard-gradle-template-edu).
+
 # GP wrapper
 
 GP wrapper takes own parameters like
