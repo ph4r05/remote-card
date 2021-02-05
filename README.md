@@ -2,17 +2,40 @@
 
 Wraps JCardSim and physical cards behind REST and WebSocket interface.
 
+The project contains 3 different parts:
+- Server part connects to the cards and provides API via REST and WebSocket interface
+- Client part is a library for connecting to the various card sources (including remote server)
+- GP is a GlobalPlatformPro wrapper with remote card channel added, so you can manipulate with the cards, e.g., install applets remotely. 
+
+# GP wrapper
+
+GP wrapper takes own parameters like
+
+- `--remote-card` contains remote address endpoint
+- `--remote-reader-idx` defines reader index on the server to use, defaults to 0
+- `--remote-type` defines card type to use on the remote server, defaults to `card`. Note that JCardSim does not support GP commands now
+
+Always specify there arguments when using the wrapper first, then other arguments to GP follow.
+If you have difficulty specifying GP arguments, separate wrapper and GP arguments by `--`.
+
+If `--remote-card` is not specified, locally connected card is used instead, obeying `GP_READER` env var. 
+
+Usage listing installed applets on a remote card:
+```bash
+./gradlew :gp:run --args="--remote-card=http://127.0.0.1:9901 --list -d"
+```
+
 # Server
 Server part below.
 
 ## Server Usage
 
 ```bash
-./gradlew run --args='--help'
+./gradlew :server:run --args='--help'
 ```
 
 ```bash
-./gradlew run --args='--reader-idx=0 --allow-pick-reader'
+./gradlew :server:run --args='--reader-idx=0 --allow-pick-reader'
 ```
 
 ### REST API
@@ -113,6 +136,13 @@ In order to specify your applets for a simulator, override `App.configureCard` m
 
 Request and response payloads are the same.
 WebSocket is stateful, but you still have to add `target` and `index` to all your requests.
+
+Websocat enables CLI interaction with the WebSocket API
+```bash
+websocat ws://127.0.0.1:9901
+```
+
+If request contains `rid` field, WebSocket API returns `rid` in the response, so the client can pair requests to the responses.
 
 ```
 {"action":"is_connected"}
