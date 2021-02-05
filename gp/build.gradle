@@ -1,0 +1,49 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+group = 'com.klinec'
+version = '1.0-SNAPSHOT'
+
+configurations {
+    bcprov
+    runtimeClasspath.extendsFrom(bcprov)
+}
+
+dependencies {
+    api(project(':common'))
+    api(project(':client'))
+
+    bcprov("org.bouncycastle:bcprov-jdk15on:$bouncycastle_version")
+    bcprov("org.bouncycastle:bcpkix-jdk15on:$bouncycastle_version")
+
+    implementation group: "io.undertow", name: "undertow-core", version: "2.0.26.Final"
+    implementation group: "ch.qos.logback", name: "logback-classic", version: "1.2.3"
+    implementation group: "ch.qos.logback", name: "logback-core", version: "1.2.3"
+
+    implementation "com.github.ajalt:clikt:2.6.0"
+    implementation "com.jayway.jsonpath:json-path:2.4.0"
+
+    implementation "com.github.martinpaljak:gppro:$gptool_version"
+    implementation "com.github.martinpaljak:gptool:$gptool_version"
+    implementation "com.github.martinpaljak:globalplatformpro:$gptool_version"
+    implementation "com.github.martinpaljak:apdu4j-core:$apdu4j_version"
+    implementation "com.github.martinpaljak:apdu4j-pcsc:$gptool_version"
+
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
+}
+
+test {
+    useJUnit()
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = '1.8'
+    if (JavaVersion.current() >= JavaVersion.VERSION_1_9) {
+        kotlinOptions.freeCompilerArgs += ["-Xadd-modules=java.smartcardio"]
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = '1.8'
+}

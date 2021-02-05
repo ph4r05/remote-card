@@ -7,11 +7,11 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.int
 import com.licel.jcardsim.smartcardio.CardSimulator
 import com.licel.jcardsim.utils.AIDUtil
+import cz.muni.fi.crocs.rcard.client.CardManager
+import cz.muni.fi.crocs.rcard.client.CardType
+import cz.muni.fi.crocs.rcard.client.RunConfig
 import cz.muni.fi.crocs.rcard.common.createSingleThreadDispatcher
 import cz.muni.fi.crocs.rcard.common.runNoExc
-import cz.muni.fi.crocs.rcard.server.card.CardManager
-import cz.muni.fi.crocs.rcard.server.card.CardType
-import cz.muni.fi.crocs.rcard.server.card.RunConfig
 import cz.muni.fi.crocs.rcard.server.demo.DemoApplet
 import cz.muni.fi.crocs.rcard.server.demo.DemoApplet2
 import io.vertx.core.Vertx

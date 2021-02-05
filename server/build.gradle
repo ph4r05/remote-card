@@ -14,14 +14,13 @@ configurations {
 
 dependencies {
     api(project(':common'))
+    implementation(project(':client'))
+    implementation("com.klinec:jcardsim:$jcardsim_version")
 
-    implementation('com.klinec:jcardsim:3.0.5.11')
-    implementation(group: 'com.klinec', name: 'javacard-tools', version: '0.0.3') {
-        exclude group: "com.klinec", module: "jcardsim"
+    api("com.beust:klaxon:5.0.1") {
+        exclude group: "org.jetbrains.kotlin", module: "kotlin-stdlib"
+        exclude group: "org.jetbrains.kotlin", module: "kotlin-reflect"
     }
-
-    implementation "com.github.martinpaljak:apdu4j-core:$apdu4j_version"
-    implementation "com.github.martinpaljak:apdu4j-pcsc:$apdu4j_pcsc_version"
 
     implementation "io.vertx:vertx-core:$vertx_version"
     implementation "io.vertx:vertx-lang-kotlin:$vertx_version"
@@ -33,21 +32,18 @@ dependencies {
     bcprov("org.bouncycastle:bcprov-jdk15on:$bouncycastle_version")
     bcprov("org.bouncycastle:bcpkix-jdk15on:$bouncycastle_version")
 
-    implementation "io.ktor:ktor-server-netty:$ktor_version"
-    implementation "io.ktor:ktor-html-builder:$ktor_version"
-    implementation 'org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2'
-
     implementation group: "io.undertow", name: "undertow-core", version: "2.0.26.Final"
     implementation group: "ch.qos.logback", name: "logback-classic", version: "1.2.3"
     implementation group: "ch.qos.logback", name: "logback-core", version: "1.2.3"
+
     implementation "com.github.ajalt:clikt:2.6.0"
     implementation "com.jayway.jsonpath:json-path:2.4.0"
 
-    implementation 'com.github.martinpaljak:gppro:20.08.12'
-    implementation 'com.github.martinpaljak:gptool:20.08.12'
-    implementation 'com.github.martinpaljak:globalplatformpro:20.08.12'
-    implementation 'com.github.martinpaljak:apdu4j-core:2020b1'
-    implementation 'com.github.martinpaljak:apdu4j-pcsc:20.08.12'
+    implementation "com.github.martinpaljak:apdu4j-core:$apdu4j_version"
+    implementation "com.github.martinpaljak:apdu4j-pcsc:$apdu4j_pcsc_version"
+    implementation "com.github.martinpaljak:gppro:$gptool_version"
+    implementation "com.github.martinpaljak:gptool:$gptool_version"
+    implementation "com.github.martinpaljak:globalplatformpro:$gptool_version"
 
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
     runtime 'org.glassfish.jaxb:jaxb-runtime:2.3.1'

@@ -9,6 +9,8 @@ buildscript {
     ext.vertx_version = '3.9.0'
     ext.apdu4j_version = '2020b1'
     ext.apdu4j_pcsc_version = '20.08.12'
+    ext.gptool_version = '20.08.12'
+    ext.jcardsim_version = '3.0.5.11'
 
     repositories {
         google()

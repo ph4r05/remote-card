@@ -3,3 +3,4 @@ rootProject.name = 'remote-card'
 include(':common')
 include(':server')
 include(':client')
+include(':gp')

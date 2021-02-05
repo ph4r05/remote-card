@@ -1,19 +1,20 @@
 package cz.muni.fi.crocs.rcard.server.card
 
 import apdu4j.TerminalManager
-import cardTools.Util
 import com.licel.jcardsim.io.CAD
 import com.licel.jcardsim.io.JavaxSmartCardInterface
 import com.licel.jcardsim.smartcardio.CardSimulator
 import com.licel.jcardsim.smartcardio.CardTerminalSimulator
+import cz.muni.fi.crocs.rcard.client.*
 import javacard.framework.AID
 import javacard.framework.Applet
+import org.bouncycastle.util.encoders.Hex
 import org.slf4j.LoggerFactory
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.smartcardio.*
 
-class CardManager(bDebug: Boolean, appletAID: ByteArray?) {
+class CardManagerLocal(bDebug: Boolean, appletAID: ByteArray?) {
     var bDebug = false
 
     val isConnected = AtomicBoolean(false)
@@ -51,7 +52,7 @@ class CardManager(bDebug: Boolean, appletAID: ByteArray?) {
     var doSelect = true
 
     companion object {
-        private val logger = LoggerFactory.getLogger(CardManager::class.java)
+        private val logger = LoggerFactory.getLogger(CardManagerLocal::class.java)
     }
 
     init {
@@ -89,6 +90,13 @@ class CardManager(bDebug: Boolean, appletAID: ByteArray?) {
             CardType.JCARDSIMREMOTE -> {
                 channel = null // Not implemented yet
             }
+            CardType.REMOTE -> {
+                channel = RemoteCardChannel(runCfg)
+                maybeSelect()
+            }
+            else -> {
+                throw RuntimeException("Null Card type")
+            }
         }
         if (channel != null) {
             bConnected = true
@@ -111,9 +119,12 @@ class CardManager(bDebug: Boolean, appletAID: ByteArray?) {
 
     @Throws(CardException::class)
     fun disconnect(bReset: Boolean) {
-        channel?.card?.disconnect(bReset) // Disconnect from the card
-        channel?.card?.atr
-        isConnected.set(false)
+        try {
+            channel?.card?.disconnect(bReset) // Disconnect from the card
+            channel?.card?.atr
+        } finally {
+            isConnected.set(false)
+        }
     }
 
     fun atr(): ATR? {
@@ -221,12 +232,15 @@ class CardManager(bDebug: Boolean, appletAID: ByteArray?) {
     fun connectTerminalAndSelect(terminal: CardTerminal?): CardChannel? {
         val ch = connectTerminal(terminal)
 
+        maybeSelect()
+        return ch
+    }
+
+    fun maybeSelect() {
         if (doSelect && appletId != null) {
             logger.debug("Smartcard: Selecting applet...")
             selectResponse = selectApplet()
         }
-
-        return ch
     }
 
     @Throws(CardException::class)
@@ -294,7 +308,7 @@ class CardManager(bDebug: Boolean, appletAID: ByteArray?) {
     private fun log(cmd: CommandAPDU) {
         logger.debug(
             String.format(
-                "--> %s (%d B)", Util.toHex(cmd.bytes),
+                "--> %s (%d B)", Hex.toHexString(cmd.bytes),
                 cmd.bytes.size
             )
         )
@@ -306,7 +320,7 @@ class CardManager(bDebug: Boolean, appletAID: ByteArray?) {
         if (data.size > 0) {
             logger.debug(
                 String.format(
-                    "<-- %s %s (%d) [%d ms]", Util.toHex(data), swStr,
+                    "<-- %s %s (%d) [%d ms]", Hex.toHexString(data), swStr,
                     data.size, time
                 )
             )

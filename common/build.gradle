@@ -14,13 +14,7 @@ dependencies {
     api "org.apache.commons:commons-lang3:3.7"
     api "org.apache.commons:commons-text:1.9"
     api "commons-codec:commons-codec:1.15"
-
-    api("com.beust:klaxon:5.0.1") {
-        exclude group: "org.jetbrains.kotlin", module: "kotlin-stdlib"
-        exclude group: "org.jetbrains.kotlin", module: "kotlin-reflect"
-    }
-
-    implementation group: "org.slf4j", name: "slf4j-api", version: "1.7.30"
+    api group: "org.slf4j", name: "slf4j-api", version: "1.7.30"
 
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
 }

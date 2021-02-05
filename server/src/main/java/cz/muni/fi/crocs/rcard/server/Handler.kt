@@ -1,11 +1,10 @@
 package cz.muni.fi.crocs.rcard.server
 
-import cardTools.Util
 import com.beust.klaxon.JsonObject
+import cz.muni.fi.crocs.rcard.client.CardManager
+import cz.muni.fi.crocs.rcard.client.CardType
+import cz.muni.fi.crocs.rcard.client.RunConfig
 import cz.muni.fi.crocs.rcard.common.byteToInt
-import cz.muni.fi.crocs.rcard.server.card.CardManager
-import cz.muni.fi.crocs.rcard.server.card.CardType
-import cz.muni.fi.crocs.rcard.server.card.RunConfig
 import io.vertx.core.Vertx
 import io.vertx.core.logging.LoggerFactory
 import io.vertx.kotlin.coroutines.dispatcher
@@ -77,8 +76,8 @@ open class Handler(val vertx: Vertx, val app: App) : CoroutineScope {
         getMgr(key).disconnect(true)
     }
 
-    open fun disconnect(key: CardConnectorIdx) {
-        getMgr(key).disconnect(true)
+    open fun disconnect(key: CardConnectorIdx, reset: Boolean) {
+        getMgr(key).disconnect(reset)
     }
 
     /**
@@ -168,7 +167,7 @@ open class Handler(val vertx: Vertx, val app: App) : CoroutineScope {
                 return resp
             }
             "disconnect" -> {
-                disconnect(getTarget(req))
+                disconnect(getTarget(req), req.boolean("reset") ?: true)
                 return resp
             }
             "connect" -> {
@@ -187,7 +186,10 @@ open class Handler(val vertx: Vertx, val app: App) : CoroutineScope {
                 return resp
             }
             "atr" -> {
-                resp["atr"] = getMgr(getTarget(req)).atr()?.bytes?.let { Util.bytesToHex(it) }
+                resp["atr"] = getMgr(getTarget(req)).atr()?.bytes?.let { Hex.toHexString(it) }
+            }
+            "protocol" -> {
+                resp["protocol"] = getMgr(getTarget(req)).protocol()
             }
             "send" -> {
                 return onSend(req, resp)
@@ -261,7 +263,7 @@ open class Handler(val vertx: Vertx, val app: App) : CoroutineScope {
     open suspend fun txmit(target: CardConnectorIdx, cmd: CommandAPDU, resp: JsonObject): JsonObject{
         try {
             val apduResp = onWorkerCtx { send(target, cmd) }
-            resp["response"] = Util.bytesToHex(apduResp.bytes)
+            resp["response"] = Hex.toHexString(apduResp.bytes)
             resp["sw"] = apduResp.sw
             resp["sw_hex"] = Integer.toHexString(apduResp.sw.and(0xffff))
             resp["sw1"] = apduResp.sW1
