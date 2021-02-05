@@ -9,7 +9,7 @@ The project contains 3 main parts:
 - GP is a GlobalPlatformPro wrapper with remote card channel added, so you can manipulate with the cards, e.g., install applets remotely. 
 
 Project currently does not integrate wit PCSC natively, so the remote card is not transparently installed as a card reader.
-This may be added in future releases. Project provides JVM-only, self-contained remote card access solution.
+This may be added in future releases. Project provides JVM-only, self-contained remote card access solution (no need to install drivers or compile anything).
 For low-level solution with local reader emulation check out [virtualsmartcard](http://frankmorgner.github.io/vsmartcard/virtualsmartcard/README.html).
 
 This project can be also used when testing JavaCard mobile applications. Implement abstract card channel on the 
