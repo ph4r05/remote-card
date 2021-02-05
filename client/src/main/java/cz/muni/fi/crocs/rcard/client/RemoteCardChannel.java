@@ -57,6 +57,7 @@ public class RemoteCardChannel extends CardChannel {
 
   @Override
   public int transmit(ByteBuffer bb, ByteBuffer bb1) throws CardException {
+    LOG.error("Accessing unimplemented transmit variant");
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
@@ -163,6 +164,7 @@ public class RemoteCardChannel extends CardChannel {
   public void checkResult(JSONObject res) {
     int result = res.getInt("result");
     if (result != 0){
+      connected = false;
       LOG.warn("RemoteCard returned invalid code: " + result);
       throw new RuntimeException("RemoteCard server returned invalid code: " + result);
     }
@@ -242,6 +244,7 @@ public class RemoteCardChannel extends CardChannel {
 
     @Override
     public byte[] transmitControlCommand(int controlCode, byte[] command) throws CardException {
+      LOG.error("Accessing unsupported transmitControlCommand");
       throw new CardException("Not supported");
     }
 

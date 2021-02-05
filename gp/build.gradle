@@ -1,5 +1,7 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 group = 'com.klinec'
@@ -14,14 +16,18 @@ dependencies {
     api(project(':common'))
     api(project(':client'))
 
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coro_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:$kotlin_coro_version"
+
     bcprov("org.bouncycastle:bcprov-jdk15on:$bouncycastle_version")
-    bcprov("org.bouncycastle:bcpkix-jdk15on:$bouncycastle_version")
 
     implementation group: "io.undertow", name: "undertow-core", version: "2.0.26.Final"
     implementation group: "ch.qos.logback", name: "logback-classic", version: "1.2.3"
     implementation group: "ch.qos.logback", name: "logback-core", version: "1.2.3"
 
-    implementation "com.github.ajalt:clikt:2.6.0"
+    implementation "com.github.ajalt:clikt:2.8.0"
     implementation "com.jayway.jsonpath:json-path:2.4.0"
 
     implementation "com.github.martinpaljak:gppro:$gptool_version"
@@ -47,3 +53,48 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = '1.8'
 }
+
+application {
+    mainClassName = 'cz.muni.fi.crocs.rcard.gp.GpWrapperKt'
+}
+
+run {
+    systemProperties System.getProperties()
+    args System.getProperty("exec.args", "").split()
+}
+
+task copyShadowLibs(type: Copy) {
+    from configurations.shadow, configurations.bcprov
+    into 'build/libs'
+}
+
+task shadowJarNoBc(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+    group 'shadow'
+    archiveClassifier.set('all')
+    dependsOn copyShadowLibs
+
+    dependencies {
+        exclude(dependency('org.bouncycastle:bcprov-.*:.*'))
+    }
+
+    relocate('org.bouncycastle', 'shadow.org.bouncycastle'){
+        exclude 'org.bouncycastle.jcajce.**'
+        exclude 'org.bouncycastle.jce.**'
+
+        exclude 'org.bouncycastle.asn1.**'
+        exclude 'org.bouncycastle.crypto.**'
+        exclude 'org.bouncycastle.i18n.**'
+        exclude 'org.bouncycastle.math.**'
+        exclude 'org.bouncycastle.pqc.**'
+        exclude 'org.bouncycastle.util.**'
+        exclude 'org.bouncycastle.x509.**'
+    }
+
+    from(project.convention.getPlugin(JavaPluginConvention).sourceSets.main.output)
+    configurations = [ project.configurations.runtime, project.configurations.runtimeClasspath ]
+
+    exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+    manifest.attributes 'Main-Class': mainClassName
+    manifest.attributes 'Class-Path': "bcprov-jdk15on-${bouncycastle_version}.jar"
+}
+

@@ -262,7 +262,7 @@ open class Handler(val vertx: Vertx, val app: App) : CoroutineScope {
 
     open suspend fun txmit(target: CardConnectorIdx, cmd: CommandAPDU, resp: JsonObject): JsonObject{
         try {
-            val apduResp = onWorkerCtx { send(target, cmd) }
+            val apduResp = onWorkerCtx { supervisorScope { send(target, cmd) } }
             resp["response"] = Hex.toHexString(apduResp.bytes)
             resp["sw"] = apduResp.sw
             resp["sw_hex"] = Integer.toHexString(apduResp.sw.and(0xffff))

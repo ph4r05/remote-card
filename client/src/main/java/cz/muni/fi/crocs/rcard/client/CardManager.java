@@ -283,10 +283,17 @@ public class CardManager {
             log(cmd);
         }
 
+        ResponseAPDU response = null;
         long elapsed = -System.currentTimeMillis();
-        ResponseAPDU response = channel.transmit(cmd);
-        elapsed += System.currentTimeMillis();
-        lastTransmitTime = elapsed;
+        try {
+            response = channel.transmit(cmd);
+        } catch(Exception e) {
+            isConnected.set(false);
+            throw e;
+        } finally {
+            elapsed += System.currentTimeMillis();
+            lastTransmitTime = elapsed;
+        }
 
         if (bDebug) {
             log(response, lastTransmitTime);

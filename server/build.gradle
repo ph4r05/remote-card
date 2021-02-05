@@ -36,7 +36,7 @@ dependencies {
     implementation group: "ch.qos.logback", name: "logback-classic", version: "1.2.3"
     implementation group: "ch.qos.logback", name: "logback-core", version: "1.2.3"
 
-    implementation "com.github.ajalt:clikt:2.6.0"
+    implementation "com.github.ajalt:clikt:2.8.0"
     implementation "com.jayway.jsonpath:json-path:2.4.0"
 
     implementation "com.github.martinpaljak:apdu4j-core:$apdu4j_version"
