@@ -34,12 +34,15 @@ open class VSmartCardWrapper : CliktCommand(), CoroutineScope {
     val remoteType: String by option("--remote-type",
         help="Remote reader type")
         .default("card")
-    val host: String by option("--host",
+    val host: String by option("--host", "--hostname", "-H",
         help="VSmartCard host to connect to")
         .default("127.0.0.1")
-    val port: Int by option("--port",
+    val port: Int by option("--port", "-P",
         help="VSmartCard port to connect to")
         .int().default(35963)
+    val reversed: Boolean by option("--reversed", "-R",
+        help="Use reversed connection mode. Waits for an incoming connection from vpcd.")
+        .flag(default=false)
     val directPhysical: Boolean by option("--direct-phy",
         help="When using physical card, use direct connection, avoids CardManager")
         .flag(default=false)
@@ -47,9 +50,9 @@ open class VSmartCardWrapper : CliktCommand(), CoroutineScope {
     override fun run() {
         logger.info("Starting VSmartCard $host:$port, card: $remoteType, index: $readerIdx")
         val card = resolveCard()
-        val vSmartCard = VSmartCard(card.basicChannel, host, port)
+        val vSmartCard = VSmartCard(card.basicChannel, if (reversed) null else host, port)
 
-        logger.info("VSmartCard running")
+        logger.info("VSmartCard running: $vSmartCard")
         while(true){
             try {
                 Thread.sleep(1)

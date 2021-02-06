@@ -11,8 +11,7 @@ public class WrappingCardChannel extends CardChannel {
 
   protected CardChannel wrapped;
   private WrappingCard wrappedCard;
-  protected Long lastTransmitTime = (long) 0;
-  protected CommandAPDU lastCommand = null;
+
   protected boolean bDebug = false;
 
   /**
@@ -29,6 +28,9 @@ public class WrappingCardChannel extends CardChannel {
    * Default NE to add to the command
    */
   protected Integer defaultNe = null;
+
+  protected Long lastTransmitTime = (long) 0;
+  protected CommandAPDU lastCommand = null;
 
   public WrappingCardChannel(CardChannel wrapped) {
     if (wrapped instanceof WrappingCardChannel){
@@ -137,8 +139,17 @@ public class WrappingCardChannel extends CardChannel {
     return new CommandAPDU(cmd.getCLA(), cmd.getINS(), cmd.getP1(), cmd.getP2(), cmd.getData(), ne);
   }
 
-  public void log(ResponseAPDU response) {
-    log(response, 0);
+  @Override
+  public String toString() {
+    return "WrappingCardChannel{" +
+        "wrapped=" + wrapped +
+        ", wrappedCard=" + wrappedCard +
+        ", bDebug=" + bDebug +
+        ", fixLc=" + fixLc +
+        ", fixNe=" + fixNe +
+        ", defaultNe=" + defaultNe +
+        ", lastTransmitTime=" + lastTransmitTime +
+        '}';
   }
 
   class WrappingCard extends Card {
@@ -187,6 +198,13 @@ public class WrappingCardChannel extends CardChannel {
     @Override
     public void disconnect(boolean reset) throws CardException {
       wrappedCard.disconnect(reset);
+    }
+
+    @Override
+    public String toString() {
+      return "WrappingCard{" +
+          "wrappedCard=" + wrappedCard +
+          '}';
     }
   }
 }

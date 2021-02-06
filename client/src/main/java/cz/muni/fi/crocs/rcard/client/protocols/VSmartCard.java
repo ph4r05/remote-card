@@ -39,8 +39,17 @@ public class VSmartCard {
     private final static Logger LOG = LoggerFactory.getLogger(VSmartCard.class);
 
     public VSmartCard(CardChannel channel, String host, int port) throws IOException {
-        VSmartCardTCPProtocol driverProtocol = new VSmartCardTCPProtocol();
-        driverProtocol.connect(host, port);
+        VSmartCardProtocol driverProtocol;
+        if (host == null || host.isBlank()){
+            final VSmartCardTCPProtocolServer server = new VSmartCardTCPProtocolServer();
+            server.listen(port);
+            driverProtocol = server;
+        } else {
+            final VSmartCardTCPProtocolClient client = new VSmartCardTCPProtocolClient();
+            client.connect(host, port);
+            driverProtocol = client;
+        }
+
         startThread(channel, driverProtocol);
     }
 
@@ -73,7 +82,7 @@ public class VSmartCard {
         new VSmartCard(null, host, Integer.parseInt(port));
     }
 
-    private void startThread(CardChannel channel, VSmartCardTCPProtocol driverProtocol) throws IOException {
+    private void startThread(CardChannel channel, VSmartCardProtocol driverProtocol) throws IOException {
         final IOThread ioThread = new IOThread(channel, driverProtocol);
         final ShutDownHook hook = new ShutDownHook(ioThread);
         Runtime.getRuntime().addShutdownHook(hook);
@@ -95,11 +104,11 @@ public class VSmartCard {
     }
 
     static class IOThread extends Thread {
-        VSmartCardTCPProtocol driverProtocol;
+        VSmartCardProtocol driverProtocol;
         CardChannel channel;
         boolean isRunning;
 
-        public IOThread(CardChannel channel, VSmartCardTCPProtocol driverProtocol) {
+        public IOThread(CardChannel channel, VSmartCardProtocol driverProtocol) {
             this.channel = channel;
             this.driverProtocol = driverProtocol;
             isRunning = true;

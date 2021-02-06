@@ -197,6 +197,14 @@ public class RemoteCardChannel extends CardChannel {
     Util.log(LOG, response);
   }
 
+  @Override
+  public String toString() {
+    return "RemoteCardChannel{" +
+        "card=" + card +
+        ", connected=" + connected +
+        '}';
+  }
+
   class RemoteCard extends Card {
     private final Logger LOG = LoggerFactory.getLogger(RemoteCardChannel.class);
     @Override
@@ -251,6 +259,11 @@ public class RemoteCardChannel extends CardChannel {
     @Override
     public void disconnect(boolean reset) throws CardException {
       close();
+    }
+
+    @Override
+    public String toString() {
+      return "RemoteCard{}";
     }
   }
 
