@@ -4,8 +4,11 @@ import org.slf4j.Logger;
 
 import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Properties;
 
 /**
  *
@@ -132,5 +135,15 @@ public class Util {
 
     public static void log(Logger log, ResponseAPDU response) {
         log(log, response, 0);
+    }
+
+    public static Properties loadProperties(String fpath) throws IOException {
+        Properties cfg = new Properties();
+        try (FileInputStream fis = new FileInputStream(fpath)) {
+            cfg.load(fis);
+        } catch (Throwable t) {
+            throw new RuntimeException("Unable to load configuration " + fpath + " due to: " + t.getMessage());
+        }
+        return cfg;
     }
 }

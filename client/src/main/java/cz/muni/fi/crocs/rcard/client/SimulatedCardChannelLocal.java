@@ -17,9 +17,9 @@ public class SimulatedCardChannelLocal extends CardChannel {
     JavaxSmartCardInterface m_simulator;
     SimulatedCard m_card;
 
-    public SimulatedCardChannelLocal (JavaxSmartCardInterface simulator) {
+    public SimulatedCardChannelLocal(JavaxSmartCardInterface simulator) {
         m_simulator = simulator;
-        m_card = new SimulatedCard();
+        m_card = new SimulatedCard(this, m_simulator);
     }
 
     @Override
@@ -57,6 +57,10 @@ public class SimulatedCardChannelLocal extends CardChannel {
 
     @Override
     public void close() throws CardException {
+        m_simulator.reset();
+    }
+
+    public void reset() throws CardException {
         m_simulator.reset();
     }
 

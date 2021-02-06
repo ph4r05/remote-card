@@ -27,10 +27,7 @@ public class CardManager {
     protected boolean bDebug = false;
     protected AtomicBoolean isConnected = new AtomicBoolean(false);
     protected byte[] appletId = null;
-    protected Long lastTransmitTime = (long) 0;
-    protected CommandAPDU lastCommand = null;
-    protected CardChannel channel = null;
-    protected boolean autoSelect = true;
+    protected WrappingCardChannel channel = null;
     protected ResponseAPDU selectResponse = null;
     protected CardType lastChannelType = null;
 
@@ -73,22 +70,22 @@ public class CardManager {
 
         switch (runCfg.testCardType) {
             case PHYSICAL: {
-                channel = connectPhysicalCard(runCfg.targetReaderIndex);
+                connectPhysicalCard(runCfg.targetReaderIndex);
                 break;
             }
             case PHYSICAL_JAVAX: {
-                channel = connectPhysicalCardJavax(runCfg.targetReaderIndex);
+                connectPhysicalCardJavax(runCfg.targetReaderIndex);
                 break;
             }
             case JCOPSIM: {
-                channel = connectJCOPSimulator(runCfg.targetReaderIndex);
+                connectJCOPSimulator(runCfg.targetReaderIndex);
                 break;
             }
             case JCARDSIMLOCAL: {
                 if (runCfg.simulator != null){
-                    channel = connectJCardSimLocalSimulator(runCfg.simulator);
+                    connectJCardSimLocalSimulator(runCfg.simulator);
                 } else {
-                    channel = connectJCardSimLocalSimulator(runCfg.appletToSimulate, runCfg.installData);
+                    connectJCardSimLocalSimulator(runCfg.appletToSimulate, runCfg.installData);
                 }
                 break;
             }
@@ -97,8 +94,7 @@ public class CardManager {
                 break;
             }
             case REMOTE: {
-                channel = new RemoteCardChannel(runCfg);
-                maybeSelect();
+                connectRemoteChannel(runCfg);
                 break;
             }
             default:
@@ -115,12 +111,16 @@ public class CardManager {
     }
 
     public void connectChannel(CardChannel ch){
-        channel = ch;
+        if (ch == null){
+            channel = null;
+        } else {
+            setChannel(ch);
+        }
         isConnected.set(ch != null);
     }
 
     public void connectSimulator(CardSimulator sim) throws Exception {
-        channel = connectJCardSimLocalSimulator(sim);
+        setChannel(connectJCardSimLocalSimulator(sim));
         lastChannelType = CardType.JCARDSIMLOCAL;
         isConnected.set(true);
     }
@@ -201,12 +201,18 @@ public class CardManager {
         simulator.installApplet(appletAID, appletClass, installData, (short) 0, (byte) installData.length);
         if (doSelect) {
             selectResponse = new ResponseAPDU(simulator.selectAppletWithResult(appletAID));
-            //if (selectResponse.getSW() != -28672) {
-            //    throw new RuntimeException("Select error");
-            //}
+            // if (selectResponse.getSW() != -28672) {
+            //     throw new RuntimeException("Select error");
+            // }
         }
 
         return new SimulatedCardChannelLocal(simulator);
+    }
+
+    public CardChannel connectRemoteChannel(RunConfig cfg) throws Exception {
+        setChannel(new RemoteCardChannel(cfg));
+        maybeSelect();
+        return channel;
     }
 
     public CardChannel connectTerminalAndSelect(CardTerminal terminal) throws CardException {
@@ -233,10 +239,10 @@ public class CardManager {
         LOG.debug("Terminal connected");
 
         LOG.debug("Establishing channel...");
-        channel = card.getBasicChannel();
+        setChannel(card.getBasicChannel());
         LOG.debug("Channel established");
 
-        return card.getBasicChannel();
+        return channel;
     }
 
     public ResponseAPDU selectApplet() throws CardException {
@@ -271,35 +277,17 @@ public class CardManager {
         return connectTerminalAndSelect(terminal);
     }
 
-    public ResponseAPDU transmit(CommandAPDU cmd)
-        throws CardException {
-
-        if (isFixLc()){
-            cmd = fixApduLc(cmd);
-        }
-
-        lastCommand = cmd;
-        if (bDebug) {
-            log(cmd);
-        }
-
-        ResponseAPDU response = null;
-        long elapsed = -System.currentTimeMillis();
+    public ResponseAPDU transmit(CommandAPDU cmd) throws CardException {
         try {
-            response = channel.transmit(cmd);
+            return channel.transmit(cmd);
         } catch(Exception e) {
             isConnected.set(false);
             throw e;
-        } finally {
-            elapsed += System.currentTimeMillis();
-            lastTransmitTime = elapsed;
         }
+    }
 
-        if (bDebug) {
-            log(response, lastTransmitTime);
-        }
-
-        return response;
+    public void reset() {
+        channel.getCard().getATR();
     }
 
     public ATR atr() {
@@ -308,51 +296,6 @@ public class CardManager {
 
     public String protocol() {
         return channel.getCard().getProtocol();
-    }
-
-    public void log(CommandAPDU cmd) {
-        Util.log(LOG, cmd);
-    }
-
-    public void log(ResponseAPDU response, long time) {
-        Util.log(LOG, response, time);
-    }
-
-    public CommandAPDU fixApduLc(CommandAPDU cmd){
-        if (cmd.getNc() != 0){
-            return fixApduNe(cmd);
-        }
-
-        byte[] apdu = new byte[] {
-            (byte)cmd.getCLA(),
-            (byte)cmd.getINS(),
-            (byte)cmd.getP1(),
-            (byte)cmd.getP2(),
-            (byte)0
-        };
-        return new CommandAPDU(apdu);
-    }
-
-    private CommandAPDU fixApduNe(CommandAPDU cmd) {
-        Boolean doFix = fixNe;
-        if (doFix == null) {
-            doFix = System.getProperty("cz.muni.fi.crocs.rcard.fixNe", "false").equalsIgnoreCase("true");
-        }
-        if (!doFix) {
-            return cmd;
-        }
-
-        Integer ne = defaultNe;
-        if (ne == null) {
-            ne = Integer.valueOf(System.getProperty("cz.muni.fi.crocs.rcard.defaultNe", "255"));
-        }
-
-        LOG.debug("Fixed NE for the APDU to: " + ne);
-        return new CommandAPDU(cmd.getCLA(), cmd.getINS(), cmd.getP1(), cmd.getP2(), cmd.getData(), ne);
-    }
-
-    public void log(ResponseAPDU response) {
-        log(response, 0);
     }
 
     public Card waitForCard(CardTerminals terminals)
@@ -376,11 +319,11 @@ public class CardManager {
     }
 
     public Long getLastTransmitTime() {
-        return lastTransmitTime;
+        return channel.lastTransmitTime;
     }
 
     public CommandAPDU getLastCommand() {
-        return lastCommand;
+        return channel.lastCommand;
     }
 
     public CardChannel getChannel() {
@@ -389,6 +332,9 @@ public class CardManager {
 
     public CardManager setbDebug(boolean bDebug) {
         this.bDebug = bDebug;
+        if (channel != null){
+            channel.bDebug = bDebug;
+        }
         return this;
     }
 
@@ -397,18 +343,12 @@ public class CardManager {
         return this;
     }
 
-    public CardManager setLastTransmitTime(Long lastTransmitTime) {
-        this.lastTransmitTime = lastTransmitTime;
-        return this;
-    }
-
-    public CardManager setLastCommand(CommandAPDU lastCommand) {
-        this.lastCommand = lastCommand;
-        return this;
-    }
-
     public CardManager setChannel(CardChannel channel) {
-        this.channel = channel;
+        this.channel = new WrappingCardChannel(channel);
+        this.channel.bDebug = bDebug;
+        this.channel.fixLc = fixLc;
+        this.channel.fixNe = fixNe;
+        this.channel.defaultNe = defaultNe;
         return this;
     }
 
@@ -418,15 +358,10 @@ public class CardManager {
 
     public CardManager setFixLc(boolean fixLc) {
         this.fixLc = fixLc;
+        if (channel != null){
+            channel.fixLc = fixLc;
+        }
         return this;
-    }
-
-    public boolean isAutoSelect() {
-        return autoSelect;
-    }
-
-    public void setAutoSelect(boolean autoSelect) {
-        this.autoSelect = autoSelect;
     }
 
     public ResponseAPDU getSelectResponse() {
@@ -448,6 +383,9 @@ public class CardManager {
 
     public CardManager setFixNe(Boolean fixNe) {
         this.fixNe = fixNe;
+        if (channel != null){
+            channel.fixNe = fixNe;
+        }
         return this;
     }
 
@@ -457,6 +395,9 @@ public class CardManager {
 
     public CardManager setDefaultNe(Integer defaultNe) {
         this.defaultNe = defaultNe;
+        if (channel != null){
+            channel.defaultNe = defaultNe;
+        }
         return this;
     }
 

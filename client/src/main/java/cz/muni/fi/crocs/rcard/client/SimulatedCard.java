@@ -1,5 +1,7 @@
 package cz.muni.fi.crocs.rcard.client;
 
+import com.licel.jcardsim.io.JavaxSmartCardInterface;
+
 import javax.smartcardio.ATR;
 import javax.smartcardio.Card;
 import javax.smartcardio.CardChannel;
@@ -11,19 +13,27 @@ import javax.smartcardio.CardException;
  */
 public class SimulatedCard extends Card {
 
+    JavaxSmartCardInterface sim;
+    SimulatedCardChannelLocal channel;
+
+    public SimulatedCard(SimulatedCardChannelLocal channel, JavaxSmartCardInterface sim) {
+        this.sim = sim;
+        this.channel = channel;
+    }
+
     @Override
     public ATR getATR() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new ATR(sim.getATR());
     }
 
     @Override
     public String getProtocol() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return sim.getProtocol();
     }
 
     @Override
     public CardChannel getBasicChannel() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return channel;
     }
 
     @Override
@@ -48,6 +58,6 @@ public class SimulatedCard extends Card {
 
     @Override
     public void disconnect(boolean bln) throws CardException {
-        // do nothing
+        channel.reset();
     }
 }
