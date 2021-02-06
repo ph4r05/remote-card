@@ -81,6 +81,27 @@ Usage listing installed applets on a remote card:
 ./gradlew :gp:run --args="--remote-card=http://127.0.0.1:9901 --list -d"
 ```
 
+## VSmartCard
+
+GP Wrapper enables to use GP with cards accessible via VICC.
+In this way you can manage applets on the physical JavaCard via Android smartphone, without need to have a card reader.
+
+- Install [remote-reader](http://frankmorgner.github.io/vsmartcard/remote-reader/README.html) on your Android phone.
+  - Or you can build it from [source](https://github.com/frankmorgner/vsmartcard/tree/master/remote-reader) or my [updated version](https://github.com/ph4r05/vsmartcard/tree/ph4/remote-reader)
+- Configure the remote-reader to connect to your PC (specify IP address in configuration)
+- Start GP wrapper in listening mode. It starts a local server on 0.0.0.0 listening on the default port 35963.
+- Tap the card to the Android. On tap, connection to the PC running GP wrapper is created.
+
+Starting GP in listening mode:
+```bash
+./gradlew :gp:run --args="--card-type vsmartcard --listen --list -d"
+```
+
+It works like this:
+```
+Physical Card <---> Android <--- tcp:35963 ---> GPWrapper <---> GP
+```
+
 # Server
 Server part below.
 

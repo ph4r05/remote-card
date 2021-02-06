@@ -81,8 +81,12 @@ open class GpWrapper : CliktCommand(treatUnknownOptionsAsArgs = true), Coroutine
         return mgr.channel.card
     }
 
+    private fun isRemoteCard(): Boolean {
+        return !remoteEndpoint.isNullOrBlank() || "remote" == cardType || "vsmartcard" == cardType
+    }
+
     private fun resolveCard(): Card {
-        if (!remoteEndpoint.isNullOrBlank()){
+        if (isRemoteCard()){
             return resolveRemoteCard()
         }
 
