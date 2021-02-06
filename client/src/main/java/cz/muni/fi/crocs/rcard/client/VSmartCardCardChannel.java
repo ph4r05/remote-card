@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  * Endpoint behaves like VPCD
  * http://frankmorgner.github.io/vsmartcard/virtualsmartcard/README.html
  *
- * Waits for VICC connection or connects to the VICC, based on the address setting (null address -> listen)
+ * Waits for VICC connection or connects to the VICC, based on the address setting (null address: listen)
  */
 public class VSmartCardCardChannel extends CardChannel {
   private final static Logger LOG = LoggerFactory.getLogger(VSmartCardCardChannel.class);

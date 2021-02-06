@@ -131,9 +131,9 @@ public class CardManager {
     /**
      * Use created simulator instance
      * @param sim setup JCardSim
-     * @throws Exception
+     * @throws CardException exception
      */
-    public void connectSimulator(CardSimulator sim) throws Exception {
+    public void connectSimulator(CardSimulator sim) throws CardException {
         setChannel(connectJCardSimLocalSimulator(sim));
         lastChannelType = CardType.JCARDSIMLOCAL;
         isConnected.set(true);
@@ -142,7 +142,7 @@ public class CardManager {
     /**
      * Card disconnect
      * @param bReset reset card
-     * @throws CardException
+     * @throws CardException exception
      */
     public void disconnect(boolean bReset) throws CardException {
         try {
@@ -202,7 +202,7 @@ public class CardManager {
         throw new RuntimeException("No card terminal found");
     }
 
-    public CardChannel connectJCardSimLocalSimulator(CardSimulator sim) throws Exception {
+    public CardChannel connectJCardSimLocalSimulator(CardSimulator sim) throws CardException {
         System.setProperty("com.licel.jcardsim.terminal.type", "2");
         final CardTerminal cardTerminal = CardTerminalSimulator.terminal(sim);
         return connectTerminalAndSelect(cardTerminal);
@@ -306,7 +306,7 @@ public class CardManager {
      * Main communication method with the card.
      * @param cmd APDU command to send to the card
      * @return APDU card response
-     * @throws CardException
+     * @throws CardException exception
      */
     public ResponseAPDU transmit(CommandAPDU cmd) throws CardException {
         try {
@@ -334,7 +334,7 @@ public class CardManager {
 
     /**
      * Retrieve card protocol
-     * @return
+     * @return protocol
      */
     public String protocol() {
         return channel.getCard().getProtocol();
