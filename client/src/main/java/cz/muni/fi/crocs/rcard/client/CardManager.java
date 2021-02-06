@@ -19,8 +19,10 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
+ * Main connector to various card sources.
  *
  * @author Petr Svenda
+ * @author Dusan Klinec ph4r05@gmail.com
  */
 public class CardManager {
     private final static Logger LOG = LoggerFactory.getLogger(CardManager.class);
@@ -57,7 +59,8 @@ public class CardManager {
     }
 
     /**
-     * Card connect
+     * Connect to a card source specified in the configuration.
+     *
      * @param runCfg run configuration
      * @return true if connected
      * @throws Exception exceptions from underlying connects
@@ -97,10 +100,12 @@ public class CardManager {
                 connectRemoteChannel(runCfg);
                 break;
             }
+            case VSMARTCARD: {
+                connectVSmartCart(runCfg);
+                break;
+            }
             default:
-                channel = null;
-                bConnected = false;
-
+                throw new RuntimeException("Unknown card type: " + runCfg.testCardType);
         }
         if (channel != null) {
             bConnected = true;
@@ -110,6 +115,10 @@ public class CardManager {
         return bConnected;
     }
 
+    /**
+     * Use existing card channel directly
+     * @param ch CardChannel
+     */
     public void connectChannel(CardChannel ch){
         if (ch == null){
             channel = null;
@@ -119,12 +128,22 @@ public class CardManager {
         isConnected.set(ch != null);
     }
 
+    /**
+     * Use created simulator instance
+     * @param sim setup JCardSim
+     * @throws Exception
+     */
     public void connectSimulator(CardSimulator sim) throws Exception {
         setChannel(connectJCardSimLocalSimulator(sim));
         lastChannelType = CardType.JCARDSIMLOCAL;
         isConnected.set(true);
     }
 
+    /**
+     * Card disconnect
+     * @param bReset reset card
+     * @throws CardException
+     */
     public void disconnect(boolean bReset) throws CardException {
         try {
             channel.getCard().disconnect(bReset); // Disconnect from the card
@@ -215,6 +234,12 @@ public class CardManager {
         return channel;
     }
 
+    public CardChannel connectVSmartCart(RunConfig cfg) throws Exception {
+        setChannel(new VSmartCardCardChannel(cfg));
+        maybeSelect();
+        return channel;
+    }
+
     public CardChannel connectTerminalAndSelect(CardTerminal terminal) throws CardException {
         CardChannel ch = connectTerminal(terminal);
 
@@ -277,6 +302,12 @@ public class CardManager {
         return connectTerminalAndSelect(terminal);
     }
 
+    /**
+     * Main communication method with the card.
+     * @param cmd APDU command to send to the card
+     * @return APDU card response
+     * @throws CardException
+     */
     public ResponseAPDU transmit(CommandAPDU cmd) throws CardException {
         try {
             return channel.transmit(cmd);
@@ -286,14 +317,25 @@ public class CardManager {
         }
     }
 
+    /**
+     * Reset the card
+     */
     public void reset() {
         channel.getCard().getATR();
     }
 
+    /**
+     * Read card ATR
+     * @return ATR
+     */
     public ATR atr() {
         return channel.getCard().getATR();
     }
 
+    /**
+     * Retrieve card protocol
+     * @return
+     */
     public String protocol() {
         return channel.getCard().getProtocol();
     }

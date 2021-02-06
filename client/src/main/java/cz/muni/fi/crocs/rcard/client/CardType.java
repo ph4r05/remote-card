@@ -1,5 +1,38 @@
 package cz.muni.fi.crocs.rcard.client;
 
 public enum CardType {
-  PHYSICAL, JCOPSIM, JCARDSIMLOCAL, JCARDSIMREMOTE, PHYSICAL_JAVAX, REMOTE
+  /**
+   * Physically connected card, APDU4J reader
+   */
+  PHYSICAL,
+
+  /**
+   * JCOP card simulator, deprecated
+   */
+  JCOPSIM,
+
+  /**
+   * Locla JCardSim, configured in the RunConfig
+   */
+  JCARDSIMLOCAL,
+
+  /**
+   * Remote JCardSim, deprecated
+   */
+  JCARDSIMREMOTE,
+
+  /**
+   * Physically connected card, uses javax.smartcardio for connection
+   */
+  PHYSICAL_JAVAX,
+
+  /**
+   * Remote card over REST interface
+   */
+  REMOTE,
+
+  /**
+   * VSmartCard card connection protocol (connects to vicc)
+   */
+  VSMARTCARD
 }

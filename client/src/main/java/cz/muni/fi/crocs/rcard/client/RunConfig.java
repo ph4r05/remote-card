@@ -2,6 +2,9 @@ package cz.muni.fi.crocs.rcard.client;
 
 import com.licel.jcardsim.smartcardio.CardSimulator;
 import javacard.framework.Applet;
+import org.apache.commons.codec.binary.Hex;
+
+import java.util.Arrays;
 
 /**
  * Applet run configuration.
@@ -17,6 +20,7 @@ public class RunConfig {
     byte[] aid = null;
     CardSimulator simulator = null;
     String remoteAddress;
+    Integer remoteViccPort = null;
     boolean remoteDisconnectPrevious = false;
 
     public CardType testCardType = CardType.PHYSICAL;
@@ -128,5 +132,32 @@ public class RunConfig {
     public RunConfig setRemoteDisconnectPrevious(boolean remoteDisconnectPrevious) {
         this.remoteDisconnectPrevious = remoteDisconnectPrevious;
         return this;
+    }
+
+    public Integer getRemoteViccPort() {
+        return remoteViccPort;
+    }
+
+    public RunConfig setRemoteViccPort(Integer remoteViccPort) {
+        this.remoteViccPort = remoteViccPort;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "RunConfig{" +
+            "targetReaderIndex=" + targetReaderIndex +
+            ", numRepeats=" + numRepeats +
+            ", appletToSimulate=" + appletToSimulate +
+            ", bReuploadApplet=" + bReuploadApplet +
+            ", installData=" + Hex.encodeHexString(installData) +
+            ", aid=" + Hex.encodeHexString(aid) +
+            ", simulator=" + simulator +
+            ", remoteAddress='" + remoteAddress + '\'' +
+            ", remoteViccPort=" + remoteViccPort +
+            ", remoteDisconnectPrevious=" + remoteDisconnectPrevious +
+            ", testCardType=" + testCardType +
+            ", remoteCardType=" + remoteCardType +
+            '}';
     }
 }

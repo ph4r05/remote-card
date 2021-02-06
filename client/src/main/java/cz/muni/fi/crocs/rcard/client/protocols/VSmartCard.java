@@ -41,7 +41,7 @@ public class VSmartCard {
     public VSmartCard(CardChannel channel, String host, int port) throws IOException {
         VSmartCardProtocol driverProtocol;
         if (host == null || host.isBlank()){
-            final VSmartCardTCPProtocolServer server = new VSmartCardTCPProtocolServer();
+            final VSmartCardTCPProtocolReversed server = new VSmartCardTCPProtocolReversed();
             server.listen(port);
             driverProtocol = server;
         } else {

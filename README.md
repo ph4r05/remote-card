@@ -22,6 +22,47 @@ can speed up the development process. Also, the remote card can be JcardSim base
 Tool was created to support remote learning in [CRoCS](https://github.com/crocs-muni/), [1](https://crocs.fi.muni.cz).
 Support for remote cards is already integrated in [JavaCard gradle template project](https://github.com/crocs-muni/javacard-gradle-template-edu).
 
+## VSmartCard
+
+Remote-card has support for VSmartCard in two modes:
+- CardManager can connect to existing VICC instances. Usage: Use remote reader, remotely accessed card via VICC.
+- VSmartCardWrapper provides any card under VICC interface. Usage: Local VPCD can connect to the VSmartCardWrapper
+and communicate with the card via CardManager (e.g., remote card accessed via REST interface).
+
+# Client
+
+Client library provides `CardManager` class that enables to connect to various cards under unified API.
+If the app uses CardManager to create a card connection and communicate with the card, application can 
+switch between card backends transparently.
+
+Card sources:
+- Locally connected physical card
+- Locally setup JCardSim
+- Remote card access via server component. The remote card on the server-side can be again physical or emulated.
+- [VSmartCart](http://frankmorgner.github.io/vsmartcard/virtualsmartcard/README.html), acts as VPCD, communicates 
+  with VICC (or with [remote-reader](http://frankmorgner.github.io/vsmartcard/remote-reader/README.html)).
+
+Example of creating a connection to a remote card:
+
+```kotlin
+val cfg = RunConfig.getDefaultConfig().apply {
+    testCardType = CardType.REMOTE              // type of the card to connect to
+    remoteAddress = "http://127.0.0.1:9001"     // remote card REST endpoint
+    targetReaderIndex = 0                       // remote card reader index 0
+    remoteCardType = CardType.PHYSICAL          // remote card is physical
+}
+
+val mgr = CardManager(true, null)
+mgr.connect(cfg)
+val apduResp = mgr.transmit(CommandAPDU(0, 0x4a, 4, 0, Hex.decodeHex("0102030405")))
+
+// Obtain javax.smartcardio.CardChannel
+val channel = mgr.channel
+
+// Obtain javax.smartcardio.Card
+val card = mgr.channel.card
+```
+
 # GP wrapper
 
 GP wrapper takes own parameters like

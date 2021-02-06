@@ -20,39 +20,30 @@
 
 package cz.muni.fi.crocs.rcard.client.protocols;
 
-import com.licel.jcardsim.remote.VSmartCardTCPProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.util.concurrent.TimeUnit;
 
 /**
  * VSmartCard TCP protocol implementation. Used by VSmartCard.
- * Waiting for VPCD connection.
+ * VICC client side, waiting for VPCD connection.
  *
  * @author alex@cooperi.net
  * @author ph4r05@gmail.com
  */
-public class VSmartCardTCPProtocolServer implements VSmartCardProtocol {
-    private final static Logger LOG = LoggerFactory.getLogger(VSmartCardTCPProtocolServer.class);
+public class VSmartCardTCPProtocolReversed implements VSmartCardProtocol {
+    private final static Logger LOG = LoggerFactory.getLogger(VSmartCardTCPProtocolReversed.class);
     private ServerSocket listenSocket;
     private Socket socket;
     private InputStream  dataInput;
     private OutputStream dataOutput;
-    private int frameLen = -1;
-
-    public static final int POWER_OFF = 0;
-    public static final int POWER_ON = 1;
-    public static final int RESET = 2;
-    public static final int GET_ATR = 4;
-    public static final int APDU = -1;
+    private VSmartCardCommProto protocol;
 
     public void listen(int port) throws IOException {
         listenSocket = new ServerSocket(port);
@@ -68,63 +59,33 @@ public class VSmartCardTCPProtocolServer implements VSmartCardProtocol {
 
         dataInput   = socket.getInputStream();
         dataOutput  = socket.getOutputStream();
+        protocol = new VSmartCardCommProto(dataInput, dataOutput);
     }
 
     public void disconnect() {
         closeSocket(socket);
+        try {
+            listenSocket.close();
+        } catch (IOException e) {
+            LOG.warn("Exception closing listening socket", e);
+        }
     }
 
     public int readCommand() throws IOException {
-        final byte[] cmdBuf = new byte[3];
-        read(cmdBuf, 0, 2, dataInput);
-        final int len = ((cmdBuf[0] << 8) & 0xFF00) | (cmdBuf[1] & 0xFF);
-        if (len == 1) {
-            read(cmdBuf, 2, 1, dataInput);
-            final int cmd = cmdBuf[2];
-            return (cmd);
-        }
-        frameLen = len;
-        return (APDU);
+        return protocol.readCommand();
     }
 
     public byte[] readData() throws IOException {
-        if (frameLen == -1) {
-            throw new IOException("No APDU command waiting");
-        }
-        final byte[] buf = new byte[frameLen];
-        read(buf, dataInput);
-        frameLen = -1;
-        return buf;
+        return protocol.readData();
     }
 
     public void writeData(byte[] data) throws IOException {
-        final byte[] buf = new byte[2 + data.length];
-        buf[0] = (byte)(((data.length & 0xFF00) >> 8) & 0xFF);
-        buf[1] = (byte)(data.length & 0xFF);
-        System.arraycopy(data, 0, buf, 2, data.length);
-        dataOutput.write(buf);
+        protocol.writeData(data);
     }
 
     private void closeSocket(Socket sock) {
         try {
             sock.close();
         } catch (IOException ignored) {}
-    }
-
-    private void read(byte[] buf, InputStream stream) throws IOException {
-        read(buf, 0, buf.length, stream);
-    }
-
-    private void read(byte[] buf, int offset, int len, InputStream stream) throws IOException {
-        while (len > 0) {
-            final int retval = stream.read(buf, offset, len);
-
-            if (retval < 0) {
-                throw new IOException("Got negative number from socket");
-            }
-
-            len    -= retval;
-            offset += retval;
-        }
     }
 }
