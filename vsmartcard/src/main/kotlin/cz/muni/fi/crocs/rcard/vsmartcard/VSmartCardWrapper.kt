@@ -20,6 +20,27 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Wrapper for VSmartCard
  * http://frankmorgner.github.io/vsmartcard/virtualsmartcard/README.html
+ *
+ * Substitutes VICC.
+ * http://frankmorgner.github.io/vsmartcard/virtualsmartcard/README.html#running-vpicc
+ *
+ * The VPCD connects to this endpoint, or the endpoint waits for connection from vpcd if --reversed is used.
+ * This wrapper enables to present local/jcardsim/remote card to the vpcd so it can be accessed transparently on a
+ * local system.
+ *
+ * Main benefit: enables use of REST-server backed
+ * remote cards on a local system transparently as physical cards. The setup:
+ *
+ * PhysicalCard <---> Server <----REST----> VSmartCardWrapper <---> VPCD <---> Smart card application
+ *
+ * This VSmartCardWrapper runs locally, VPCD connects to the localhost.
+ * As it is simple TCP communication protocol, it is safer to run locally, while REST can go over configurable TLS.
+ *
+ * The minimal setup without REST server would be:
+ * PhysicalCard <---> VSmartCardWrapper <---> VPCD <---> Smart card application
+ *
+ * Here VSmartCardWrapper substitutes VICC. Or:
+ * JCardSim <---> VSmartCardWrapper <---> VPCD <---> Smart card application
  */
 open class VSmartCardWrapper : CliktCommand(), CoroutineScope {
     private val logger = LoggerFactory.getLogger(javaClass)
