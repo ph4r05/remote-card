@@ -50,6 +50,9 @@ open class GpWrapper : CliktCommand(treatUnknownOptionsAsArgs = true), Coroutine
     val viccPort: Int by option("--vicc-port",
         help="VSmartCard vicc port")
         .int().default(35963)
+    val vsmartcardListen: Boolean by option("--listen", "--reversed",
+        help="Listen on vicc-port")
+        .flag(default=false)
     val arguments by argument().multiple()
 
     override fun run() {
@@ -66,7 +69,7 @@ open class GpWrapper : CliktCommand(treatUnknownOptionsAsArgs = true), Coroutine
                 "vsmartcard" -> CardType.VSMARTCARD
                 else -> throw RuntimeException("Unsupported card type $cardType")
             }
-            remoteAddress = remoteEndpoint
+            remoteAddress = if (vsmartcardListen) null else remoteEndpoint
             targetReaderIndex = readerIdx
             remoteCardType = if ("sim" == remoteType) CardType.JCARDSIMLOCAL else CardType.PHYSICAL
             remoteViccPort = viccPort
