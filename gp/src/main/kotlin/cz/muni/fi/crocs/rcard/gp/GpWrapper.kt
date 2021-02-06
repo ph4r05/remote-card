@@ -36,6 +36,9 @@ open class GpWrapper : CliktCommand(treatUnknownOptionsAsArgs = true), Coroutine
 
     // https://ajalt.github.io/clikt
     init { context { allowInterspersedArgs = false } }
+    val cardType: String by option("--card-type",
+        help="Card type to connect to")
+        .default("remote")
     val remoteEndpoint: String? by option("--remote-card",
         help="Remote reader address endpoint")
     val readerIdx: Int by option("--remote-reader-idx",
@@ -44,6 +47,9 @@ open class GpWrapper : CliktCommand(treatUnknownOptionsAsArgs = true), Coroutine
     val remoteType: String by option("--remote-type",
         help="Remote reader type")
         .default("card")
+    val viccPort: Int by option("--vicc-port",
+        help="VSmartCard vicc port")
+        .int().default(35963)
     val arguments by argument().multiple()
 
     override fun run() {
@@ -54,10 +60,16 @@ open class GpWrapper : CliktCommand(treatUnknownOptionsAsArgs = true), Coroutine
 
     private fun resolveRemoteCard(): Card {
         val cfg = RunConfig.getDefaultConfig().apply {
-            testCardType = CardType.REMOTE
+            testCardType = when(cardType){
+                "remote" -> CardType.REMOTE
+                "card" -> CardType.PHYSICAL
+                "vsmartcard" -> CardType.VSMARTCARD
+                else -> throw RuntimeException("Unsupported card type $cardType")
+            }
             remoteAddress = remoteEndpoint
             targetReaderIndex = readerIdx
             remoteCardType = if ("sim" == remoteType) CardType.JCARDSIMLOCAL else CardType.PHYSICAL
+            remoteViccPort = viccPort
         }
 
         logger.info("Connecting to the remote card")
