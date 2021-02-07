@@ -99,8 +99,9 @@ public class VSmartCard {
 
         public void run() {
             ioThread.isRunning = false;
-            System.out.println("Shutdown connections");
-            ioThread.driverProtocol.disconnect();
+            try {
+                ioThread.driverProtocol.disconnect();
+            } catch(Exception ignored){}
         }
     }
 

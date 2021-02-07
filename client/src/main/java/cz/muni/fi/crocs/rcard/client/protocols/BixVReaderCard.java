@@ -106,12 +106,13 @@ public class BixVReaderCard {
 
          public void run() {
              ioThread.isRunning = false;
-             System.out.println("Shutdown connections");
              try {
                  ioThread.driverProtocol.writeEventCommand(BixVReaderIPCProtocol.CARD_REMOVED);
              } catch (Exception ignored) {
              }
-             ioThread.driverProtocol.disconnect();
+             try {
+                 ioThread.driverProtocol.disconnect();
+             } catch(Exception ignored){}
          }
     }
     
