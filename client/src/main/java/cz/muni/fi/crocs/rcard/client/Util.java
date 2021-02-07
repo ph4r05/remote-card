@@ -13,7 +13,7 @@ import java.util.Properties;
 /**
  * @author Vasilios Mavroudis and Petr Svenda
  * @author Dusan Klinec ph4r05@gmail.com
- * Source: CRoCS Card project
+ * Source: CRoCS Card project, https://github.com/ph4r05/remote-card
  */
 public class Util {
 

@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author Petr Svenda
  * @author Dusan Klinec ph4r05@gmail.com
- * Source: CRoCS Card project
+ * Source: CRoCS Card project, https://github.com/ph4r05/remote-card
  */
 public class CardManager {
     private final static Logger LOG = LoggerFactory.getLogger(CardManager.class);

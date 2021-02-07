@@ -8,7 +8,7 @@ import org.apache.commons.codec.binary.Hex;
  * Applet run configuration.
  *
  * @author Petr Svenda, Dusan Klinec
- * Source: CRoCS Card project
+ * Source: CRoCS Card project, https://github.com/ph4r05/remote-card
  */
 public class RunConfig {
     int targetReaderIndex = 0;

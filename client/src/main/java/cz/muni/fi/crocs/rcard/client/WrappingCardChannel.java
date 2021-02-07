@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
 
 /**
  * @author Dusan Klinec ph4r05@gmail.com
- * Source: CRoCS Card project
+ * Source: CRoCS Card project, https://github.com/ph4r05/remote-card
  */
 public class WrappingCardChannel extends CardChannel {
   private final static Logger LOG = LoggerFactory.getLogger(WrappingCardChannel.class);

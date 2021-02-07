@@ -16,7 +16,7 @@ import java.util.Objects;
  * the server.
  *
  * @author Dusan Klinec ph4r05@gmail.com
- * Source: CRoCS Card project
+ * Source: CRoCS Card project, https://github.com/ph4r05/remote-card
  */
 public class RemoteCardChannel extends CardChannel {
   private final static Logger LOG = LoggerFactory.getLogger(RemoteCardChannel.class);

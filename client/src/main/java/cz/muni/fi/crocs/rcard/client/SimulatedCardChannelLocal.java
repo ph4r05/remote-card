@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 /**
  * @author Petr Svenda
  * @author Dusan Klinec ph4r05@gmail.com
- * Source: CRoCS Card project
+ * Source: CRoCS Card project, https://github.com/ph4r05/remote-card
  */
 public class SimulatedCardChannelLocal extends CardChannel {
     private final static Logger LOG = LoggerFactory.getLogger(SimulatedCardChannelLocal.class);

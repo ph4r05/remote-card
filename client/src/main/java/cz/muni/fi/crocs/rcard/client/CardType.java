@@ -3,7 +3,7 @@ package cz.muni.fi.crocs.rcard.client;
 /**
  * @author Petr Svenda
  * @author Dusan Klinec ph4r05@gmail.com
- * Source: CRoCS Card project
+ * Source: CRoCS Card project, https://github.com/ph4r05/remote-card
  */
 public enum CardType {
   /**

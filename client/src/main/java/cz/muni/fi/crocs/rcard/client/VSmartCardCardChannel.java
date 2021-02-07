@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  * Waits for VICC connection or connects to the VICC, based on the address setting (null address: listen)
  *
  * @author Dusan Klinec ph4r05@gmail.com
- * Source: CRoCS Card project
+ * Source: CRoCS Card project, https://github.com/ph4r05/remote-card
  */
 public class VSmartCardCardChannel extends CardChannel {
   private final static Logger LOG = LoggerFactory.getLogger(VSmartCardCardChannel.class);
