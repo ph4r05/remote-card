@@ -175,7 +175,7 @@ open class CardHandler(val vertx: Vertx, val app: Server) : CoroutineScope {
             }
             "is_connected" -> {
                 val mgr = getMgr(getTarget(req))
-                val isCon = mgr.isConnected.get()
+                val isCon = mgr.isConnected
                 resp["connected"] = isCon
                 resp["num_connections"] = currentConnections.get()
                 resp["ctype"] = when(mgr.lastChannelType){

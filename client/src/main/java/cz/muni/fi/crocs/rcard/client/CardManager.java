@@ -64,9 +64,9 @@ public class CardManager {
      *
      * @param runCfg run configuration
      * @return true if connected
-     * @throws Exception exceptions from underlying connects
+     * @throws CardException exceptions from underlying connects
      */
-    public boolean connect(RunConfig runCfg) throws Exception {
+    public boolean connect(RunConfig runCfg) throws CardException {
         boolean bConnected = false;
         if (appletId == null && runCfg.aid != null){
             appletId = runCfg.aid;
@@ -94,8 +94,7 @@ public class CardManager {
                 break;
             }
             case JCARDSIMREMOTE: {
-                channel = null; // Not implemented yet
-                break;
+                throw new RuntimeException("JCARDSIMREMOTE not supported yet");
             }
             case REMOTE: {
                 connectRemoteChannel(runCfg);
@@ -106,7 +105,7 @@ public class CardManager {
                 break;
             }
             default:
-                throw new RuntimeException("Unknown card type: " + runCfg.testCardType);
+                throw new RuntimeException("Unsupported card type: " + runCfg.testCardType);
         }
         if (channel != null) {
             bConnected = true;
@@ -163,10 +162,14 @@ public class CardManager {
         return connectTerminalAndSelect(findCardTerminal(targetReaderIndex));
     }
 
-    public CardChannel connectJCOPSimulator(int targetReaderIndex) throws NoSuchAlgorithmException, CardException {
+    public CardChannel connectJCOPSimulator(int targetReaderIndex) throws CardException {
         LOG.debug("Looking for JCOP simulators...");
         int[] ports = new int[]{8050};
-        return connectToCardByTerminalFactory(TerminalFactory.getInstance("JcopEmulator", ports), targetReaderIndex);
+        try {
+            return connectToCardByTerminalFactory(TerminalFactory.getInstance("JcopEmulator", ports), targetReaderIndex);
+        } catch (NoSuchAlgorithmException e) {
+            throw new CardException(e);
+        }
     }
 
     public CardTerminal findCardTerminal(int targetReaderIndex) throws CardException {
@@ -209,7 +212,7 @@ public class CardManager {
         return connectTerminalAndSelect(cardTerminal);
     }
 
-    public CardChannel connectJCardSimLocalSimulator(Class<? extends Applet> appletClass, byte[] installData) throws Exception {
+    public CardChannel connectJCardSimLocalSimulator(Class<? extends Applet> appletClass, byte[] installData) {
         System.setProperty("com.licel.jcardsim.terminal.type", "2");
         CAD cad = new CAD(System.getProperties());
         JavaxSmartCardInterface simulator = (JavaxSmartCardInterface) cad.getCardInterface();
@@ -230,13 +233,13 @@ public class CardManager {
         return channel;
     }
 
-    public CardChannel connectRemoteChannel(RunConfig cfg) throws Exception {
+    public CardChannel connectRemoteChannel(RunConfig cfg) throws CardException {
         setChannel(new RemoteCardChannel(cfg));
         maybeSelect();
         return channel;
     }
 
-    public CardChannel connectVSmartCart(RunConfig cfg) throws Exception {
+    public CardChannel connectVSmartCart(RunConfig cfg) throws CardException {
         setChannel(new VSmartCardCardChannel(cfg));
         maybeSelect();
         return channel;
@@ -445,8 +448,8 @@ public class CardManager {
         return this;
     }
 
-    public AtomicBoolean getIsConnected() {
-        return isConnected;
+    public boolean getIsConnected() {
+        return isConnected.get();
     }
 
     public CardType getLastChannelType() {
