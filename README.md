@@ -65,6 +65,13 @@ val channel = mgr.channel
 val card = mgr.channel.card
 ```
 
+Client is accessible via Maven repository:
+https://mvnrepository.com/artifact/com.klinec/javacard-tools
+
+```gradle
+implementation 'com.klinec:javacard-tools:1.0.4'
+```
+
 # GP wrapper
 
 GP wrapper takes own parameters like
