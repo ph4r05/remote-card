@@ -134,7 +134,7 @@ public class VSmartCardCardChannel extends CardChannel {
     }
 
     final String host = cfg.getRemoteAddress();
-    if (host == null || host.isBlank()){
+    if (host == null || host.isEmpty()){
       LOG.debug("Host is empty, listening for VICC connection on port " + cfg.getRemoteViccPort());
       listen(cfg.getRemoteViccPort());
     } else {
