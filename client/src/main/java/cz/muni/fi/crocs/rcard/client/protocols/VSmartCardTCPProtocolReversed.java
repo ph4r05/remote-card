@@ -42,8 +42,6 @@ public class VSmartCardTCPProtocolReversed implements VSmartCardProtocol {
     private final static Logger LOG = LoggerFactory.getLogger(VSmartCardTCPProtocolReversed.class);
     private ServerSocket listenSocket;
     private Socket socket;
-    private InputStream  dataInput;
-    private OutputStream dataOutput;
     private VSmartCardCommProto protocol;
 
     public void listen(int port) throws IOException {
@@ -58,8 +56,8 @@ public class VSmartCardTCPProtocolReversed implements VSmartCardProtocol {
             TimeUnit.SECONDS.sleep(3);
         } catch (InterruptedException ignore) {}
 
-        dataInput   = socket.getInputStream();
-        dataOutput  = socket.getOutputStream();
+        final InputStream dataInput = socket.getInputStream();
+        final OutputStream dataOutput = socket.getOutputStream();
         protocol = new VSmartCardCommProto(dataInput, dataOutput);
     }
 

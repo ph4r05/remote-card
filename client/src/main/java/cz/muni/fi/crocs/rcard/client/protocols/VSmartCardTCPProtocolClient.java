@@ -21,15 +21,8 @@
 package cz.muni.fi.crocs.rcard.client.protocols;
 
 import com.licel.jcardsim.remote.VSmartCardTCPProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.concurrent.TimeUnit;
 
 /**
  * VSmartCard TCP protocol implementation. Used by VSmartCard.

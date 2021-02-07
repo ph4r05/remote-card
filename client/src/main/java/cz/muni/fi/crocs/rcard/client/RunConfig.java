@@ -4,8 +4,6 @@ import com.licel.jcardsim.smartcardio.CardSimulator;
 import javacard.framework.Applet;
 import org.apache.commons.codec.binary.Hex;
 
-import java.util.Arrays;
-
 /**
  * Applet run configuration.
  *

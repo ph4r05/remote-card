@@ -1,9 +1,6 @@
 package cz.muni.fi.crocs.rcard.client;
 
 import cz.muni.fi.crocs.rcard.client.protocols.VSmartCardCommProto;
-import okhttp3.*;
-import org.apache.commons.codec.binary.Hex;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +11,6 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -25,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * http://frankmorgner.github.io/vsmartcard/virtualsmartcard/README.html
  *
  * Waits for VICC connection or connects to the VICC, based on the address setting (null address: listen)
- * 
+ *
  * @author Dusan Klinec ph4r05@gmail.com
  * Source: CRoCS Card project
  */
