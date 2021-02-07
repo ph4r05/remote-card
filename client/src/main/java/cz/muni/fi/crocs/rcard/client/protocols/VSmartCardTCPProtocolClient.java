@@ -15,9 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
-
 package cz.muni.fi.crocs.rcard.client.protocols;
 
 import com.licel.jcardsim.remote.VSmartCardTCPProtocol;
