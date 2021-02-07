@@ -1,12 +1,14 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm'
+    id 'java'
     id 'maven'
     id 'signing'
 }
 
 group = 'com.klinec'
 //version = '1.0-SNAPSHOT'
-version = '1.0.0'
+version = '1.0.1'
+sourceCompatibility = 1.8
 
 dependencies {
     implementation "commons-codec:commons-codec:1.15"

@@ -225,7 +225,8 @@ public class CardManager {
             // }
         }
 
-        return new SimulatedCardChannelLocal(simulator);
+        setChannel(new SimulatedCardChannelLocal(simulator));
+        return channel;
     }
 
     public CardChannel connectRemoteChannel(RunConfig cfg) throws Exception {
