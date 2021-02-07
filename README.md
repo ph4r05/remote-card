@@ -2,6 +2,8 @@
 
 Wraps physically connected JavaCards and virtual JCardSim cards behind REST and WebSocket interface.
 Enables to connect multiple JavaCards on one host and access them remotely on a different host.
+Project also integrates with [VSmartCard](http://frankmorgner.github.io/vsmartcard/virtualsmartcard/README.html) so
+Android NFC phone can be used as a card reader.
 
 The project contains 3 main parts:
 - Server part connects to the cards and provides API via REST and WebSocket interface.
@@ -24,7 +26,7 @@ Support for remote cards is already integrated in [JavaCard gradle template proj
 
 ## VSmartCard
 
-Remote-card has support for VSmartCard in two modes:
+Remote-card has support for [VSmartCard](http://frankmorgner.github.io/vsmartcard/virtualsmartcard/README.html) in two modes:
 - CardManager can connect to existing VICC instances. Usage: Use remote reader, remotely accessed card via VICC.
 - VSmartCardWrapper provides any card under VICC interface. Usage: Local VPCD can connect to the VSmartCardWrapper
 and communicate with the card via CardManager (e.g., remote card accessed via REST interface).
