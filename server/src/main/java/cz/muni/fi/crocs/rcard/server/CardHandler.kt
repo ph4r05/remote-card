@@ -270,7 +270,7 @@ open class CardHandler(val vertx: Vertx, val app: Server) : CoroutineScope {
             resp["sw2"] = apduResp.sW2
         } catch(e: Exception){
             logger.error("Exception during executing card command", e)
-            resp["response"] = -2
+            resp["result"] = -2
             resp["error"] = "Exception during execution: ${e.localizedMessage}"
         }
 

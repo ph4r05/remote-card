@@ -165,7 +165,7 @@ public class RemoteCardChannel extends CardChannel {
     int result = res.getInt("result");
     if (result != 0){
       connected = false;
-      LOG.warn("RemoteCard returned invalid code: " + result);
+      LOG.warn("RemoteCard returned invalid code: " + result + ", error: " + res.optString("error"));
       throw new RuntimeException("RemoteCard server returned invalid code: " + result);
     }
   }
