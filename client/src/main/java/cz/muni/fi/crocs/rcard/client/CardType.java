@@ -1,5 +1,10 @@
 package cz.muni.fi.crocs.rcard.client;
 
+/**
+ * @author Petr Svenda
+ * @author Dusan Klinec ph4r05@gmail.com
+ * Source: CRoCS Card project
+ */
 public enum CardType {
   /**
    * Physically connected card, APDU4J reader

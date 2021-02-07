@@ -36,6 +36,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author alex@cooperi.net
  * @author ph4r05@gmail.com
+ * Source: CRoCS Card project
  */
 public class VSmartCardTCPProtocolReversed implements VSmartCardProtocol {
     private final static Logger LOG = LoggerFactory.getLogger(VSmartCardTCPProtocolReversed.class);

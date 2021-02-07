@@ -34,6 +34,7 @@ import java.util.Properties;
  * 
  * @author LICEL LLC
  * @author ph4r05@gmail.com
+ * Source: CRoCS Card project
  */
 public class BixVReaderCard {
     private final static Logger LOG = LoggerFactory.getLogger(BixVReaderCard.class);

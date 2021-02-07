@@ -34,6 +34,7 @@ import java.util.Properties;
  *
  * @author alex@cooperi.net
  * @author ph4r05@gmail.com
+ * Source: CRoCS Card project
  */
 public class VSmartCard {
     private final static Logger LOG = LoggerFactory.getLogger(VSmartCard.class);

@@ -11,6 +11,13 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Objects;
 
+/**
+ * Card channel connecting to a remote card, accessible via REST interface provided by
+ * the server.
+ *
+ * @author Dusan Klinec ph4r05@gmail.com
+ * Source: CRoCS Card project
+ */
 public class RemoteCardChannel extends CardChannel {
   private final static Logger LOG = LoggerFactory.getLogger(RemoteCardChannel.class);
   public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");

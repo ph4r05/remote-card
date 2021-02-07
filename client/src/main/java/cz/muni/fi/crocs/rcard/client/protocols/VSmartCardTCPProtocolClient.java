@@ -37,6 +37,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author alex@cooperi.net
  * @author ph4r05@gmail.com
+ * Source: CRoCS Card project
  */
 public class VSmartCardTCPProtocolClient implements VSmartCardProtocol {
     VSmartCardTCPProtocol client;

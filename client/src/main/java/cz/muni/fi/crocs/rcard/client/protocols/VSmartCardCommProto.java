@@ -4,6 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * VSmartCard communication protocol helper.
+ * Implements both vpcd and card side.
+ *
+ * @author Dusan Klinec ph4r05@gmail.com
+ * Source: CRoCS Card project
+ */
 public class VSmartCardCommProto {
   private final InputStream dataInput;
   private final OutputStream dataOutput;

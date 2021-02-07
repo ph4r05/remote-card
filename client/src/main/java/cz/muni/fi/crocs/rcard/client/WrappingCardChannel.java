@@ -6,6 +6,10 @@ import org.slf4j.LoggerFactory;
 import javax.smartcardio.*;
 import java.nio.ByteBuffer;
 
+/**
+ * @author Dusan Klinec ph4r05@gmail.com
+ * Source: CRoCS Card project
+ */
 public class WrappingCardChannel extends CardChannel {
   private final static Logger LOG = LoggerFactory.getLogger(WrappingCardChannel.class);
 

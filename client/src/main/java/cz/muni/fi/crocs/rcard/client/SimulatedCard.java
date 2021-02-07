@@ -8,8 +8,9 @@ import javax.smartcardio.CardChannel;
 import javax.smartcardio.CardException;
 
 /**
- *
  * @author Petr Svenda
+ * @author Dusan Klinec ph4r05@gmail.com
+ * Source: CRoCS Card project
  */
 public class SimulatedCard extends Card {
 

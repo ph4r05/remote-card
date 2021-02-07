@@ -8,8 +8,9 @@ import javax.smartcardio.*;
 import java.nio.ByteBuffer;
 
 /**
- *
  * @author Petr Svenda
+ * @author Dusan Klinec ph4r05@gmail.com
+ * Source: CRoCS Card project
  */
 public class SimulatedCardChannelLocal extends CardChannel {
     private final static Logger LOG = LoggerFactory.getLogger(SimulatedCardChannelLocal.class);

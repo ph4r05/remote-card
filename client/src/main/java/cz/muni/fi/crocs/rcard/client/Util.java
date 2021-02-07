@@ -11,8 +11,9 @@ import java.nio.ByteOrder;
 import java.util.Properties;
 
 /**
- *
  * @author Vasilios Mavroudis and Petr Svenda
+ * @author Dusan Klinec ph4r05@gmail.com
+ * Source: CRoCS Card project
  */
 public class Util {
 

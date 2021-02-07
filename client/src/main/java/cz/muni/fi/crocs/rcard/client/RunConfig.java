@@ -10,6 +10,7 @@ import java.util.Arrays;
  * Applet run configuration.
  *
  * @author Petr Svenda, Dusan Klinec
+ * Source: CRoCS Card project
  */
 public class RunConfig {
     int targetReaderIndex = 0;
