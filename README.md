@@ -30,6 +30,8 @@ Remote-card has support for [VSmartCard](http://frankmorgner.github.io/vsmartcar
 - CardManager can connect to existing VICC instances. Usage: Use remote reader, remotely accessed card via VICC.
 - VSmartCardWrapper provides any card under VICC interface. Usage: Local VPCD can connect to the VSmartCardWrapper
 and communicate with the card via CardManager (e.g., remote card accessed via REST interface).
+  
+VSmartCard [protocol documentation](https://frankmorgner.github.io/vsmartcard/virtualsmartcard/api.html#virtualsmartcard-api).
 
 # Client
 
