@@ -113,6 +113,9 @@ It works like this:
 Physical Card <---> Android <--- tcp:35963 ---> GPWrapper <---> GP
 ```
 
+### iOS version, limitations
+Visit [this page on iOS remote-card](ios.md)
+
 # Server
 Server part below.
 
