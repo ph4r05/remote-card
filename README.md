@@ -113,6 +113,11 @@ It works like this:
 Physical Card <---> Android <--- tcp:35963 ---> GPWrapper <---> GP
 ```
 
+GP Wrapper also supports a [listener mode](https://github.com/frankmorgner/vsmartcard/pull/187) (reversed). You need to provide hostname of the card endpoint:
+```bash
+./gradlew :gp:run --args="--card-type vsmartcard --remote-card 192.168.1.20 --list -d"
+```
+
 ### iOS version, limitations
 Visit [this page on iOS remote-card](ios.md)
 
