@@ -16,7 +16,7 @@ cd vsmartcard/virtualsmartcard
 brew install help2man gengetopt 
 autoreconf --verbose --install
 
-./configure --prefix=/ --enable-infoplist
+./configure --enable-infoplist
 make
 make osx
 ```
@@ -24,7 +24,9 @@ make osx
 If build fails, try applying patch from the [pull request](https://github.com/frankmorgner/vsmartcard/issues/186).
 
 - Open `virtualsmartcard-0.8_osx.dmg` and install OpenPACE
-- if installation of VirtualSmartCard fails, do the following
+- Install VirtualSmartCard, if it fails, do the following
+
+### Troubleshooting - driver installation
 
 Since El Capitan it is not possible to add drivers to the System volume (snapshot):
 ```
@@ -103,8 +105,7 @@ netstat -an -ptcp | grep LISTEN
 In order to test it, you can use [remote-reader](https://frankmorgner.github.io/vsmartcard/remote-reader/README.html)
 project. Set IP address of your host running the VPCD in the Android app and tap the card.
 
-
-### Troubleshooting
+### Troubleshooting - log inspection
 
 Inspect card-related logs:
 
