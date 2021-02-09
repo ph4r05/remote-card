@@ -51,14 +51,7 @@ the driver directory should be
 /usr/local/libexec/SmartCardServices/drivers/
 ```
 
-Thus copy vpcd driver:
-
-```bash
-rsync -av ./virtualsmartcard-0.8_osx/usr/libexec/SmartCardServices/drivers/ifd-vpcd.bundle /usr/local/libexec/SmartCardServices/drivers
-cp doc/Info.plist /usr/local/libexec/SmartCardServices/drivers/ifd-vpcd.bundle/Contents/
-```
-
-Edit 
+Then 
 ```bash
 vim /usr/local/libexec/SmartCardServices/drivers/ifd-vpcd.bundle/Contents/vpcd
 ```
