@@ -23,6 +23,8 @@ make osx
 
 If build fails, try applying patch from the [pull request](https://github.com/frankmorgner/vsmartcard/issues/186).
 
+Sometimes, `make osx` fails, just re-run the command.
+
 - Open `virtualsmartcard-0.8_osx.dmg` and install OpenPACE
 - Install VirtualSmartCard, if it fails, do the following
 
