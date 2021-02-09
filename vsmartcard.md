@@ -15,7 +15,6 @@ cd vsmartcard/virtualsmartcard
 
 brew install help2man gengetopt 
 autoreconf --verbose --install
-
 ./configure --enable-infoplist
 make osx
 ```
@@ -25,7 +24,9 @@ If build fails, try applying patch from the [pull request](https://github.com/fr
 Sometimes, `make osx` fails, just re-run the command.
 
 - Open `virtualsmartcard-0.8_osx.dmg` and install OpenPACE
-- Install VirtualSmartCard, if it fails, do the following
+- Install VirtualSmartCard, if it fails, do the following.
+
+After installation do not forget to configure Info.plist (below)
 
 ```bash
 ./configure --enable-infoplist
