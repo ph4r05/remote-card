@@ -365,8 +365,8 @@ public class CardManager {
         return appletId;
     }
 
-    public Long getLastTransmitTime() {
-        return channel.lastTransmitTime;
+    public long getLastTransmitTime() {
+        return channel.lastTransmitTimeDuration.toMillis();
     }
 
     public CommandAPDU getLastCommand() {
