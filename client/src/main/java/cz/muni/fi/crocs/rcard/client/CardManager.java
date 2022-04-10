@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.smartcardio.*;
 import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -365,8 +366,18 @@ public class CardManager {
         return appletId;
     }
 
+    // it's safe to return the reference directly as all Duration methods
+    // are either const or return a copy
+    public Duration getLastTransmitTimeDuration() {
+        return channel.lastTransmitTimeDuration;
+    }
+
     public long getLastTransmitTime() {
         return channel.lastTransmitTimeDuration.toMillis();
+    }
+
+    public long getLastTransmitTimeNano() {
+        return channel.lastTransmitTimeDuration.toNanos();
     }
 
     public CommandAPDU getLastCommand() {
