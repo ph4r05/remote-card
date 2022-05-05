@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.smartcardio.*;
 import java.nio.ByteBuffer;
+import java.time.Duration;
 
 /**
  * @author Dusan Klinec ph4r05@gmail.com
@@ -33,7 +34,7 @@ public class WrappingCardChannel extends CardChannel {
    */
   protected Integer defaultNe = null;
 
-  protected Long lastTransmitTime = (long) 0;
+  protected Duration lastTransmitTimeDuration = Duration.ZERO;
   protected CommandAPDU lastCommand = null;
 
   public WrappingCardChannel(CardChannel wrapped) {
@@ -70,16 +71,16 @@ public class WrappingCardChannel extends CardChannel {
     }
 
     ResponseAPDU response = null;
-    long elapsed = -System.currentTimeMillis();
+    long start = System.nanoTime();
     try {
       response = wrapped.transmit(cmd);
     } finally {
-      elapsed += System.currentTimeMillis();
-      lastTransmitTime = elapsed;
+      long end = System.nanoTime();
+      lastTransmitTimeDuration = Duration.ofNanos(end - start);
     }
 
     if (bDebug) {
-      log(response, lastTransmitTime);
+      log(response, lastTransmitTimeDuration.toMillis());
     }
 
     return response;
@@ -152,7 +153,7 @@ public class WrappingCardChannel extends CardChannel {
         ", fixLc=" + fixLc +
         ", fixNe=" + fixNe +
         ", defaultNe=" + defaultNe +
-        ", lastTransmitTime=" + lastTransmitTime +
+        ", lastTransmitTime=" + lastTransmitTimeDuration +
         '}';
   }
 
