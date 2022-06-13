@@ -17,7 +17,7 @@ dependencies {
     implementation(project(':client'))
     implementation("com.klinec:jcardsim:$jcardsim_version")
 
-    api("com.beust:klaxon:5.0.1") {
+    api("com.beust:klaxon:$klaxon_version") {
         exclude group: "org.jetbrains.kotlin", module: "kotlin-stdlib"
         exclude group: "org.jetbrains.kotlin", module: "kotlin-reflect"
     }

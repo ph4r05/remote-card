@@ -11,6 +11,7 @@ buildscript {
     ext.apdu4j_pcsc_version = '20.08.12'
     ext.gptool_version = '20.08.12'
     ext.jcardsim_version = '3.0.5.11'
+    ext.klaxon_version = '5.6'
 
     repositories {
         google()
